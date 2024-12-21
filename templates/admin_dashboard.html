@@ -1,0 +1,75 @@
+{% extends 'admin_sidebar.html' %}
+
+{% block content %}
+    <h2 class="text-2xl font-bold text-teal-400 mb-4">Admin Dashboard</h2>
+    
+    <!-- Dashboard Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+        <!-- Current Exam Option -->
+        <a href="{{ url_for('timetable') }}" class="bg-gray-800 p-6 rounded-lg shadow-lg transition-all transform hover:scale-105 hover:bg-gradient-to-r from-cyan-500 to-blue-500">
+            <div class="flex items-center">
+                <i class="fas fa-clipboard-list text-3xl text-teal-400 mr-4"></i>
+                <div>
+                    <h3 class="text-xl font-bold bg-text mb-2">Timetable Management</h3>
+                    <p class="text-gray-300">Manage ongoing exams.</p>
+                </div>
+            </div>
+        </a>
+
+        <!-- Venue Management Option -->
+        <a href="{{ url_for('admin_venue') }}" class="bg-gray-800 p-6 rounded-lg shadow-lg transition-all transform hover:scale-105 hover:bg-gradient-to-r from-cyan-500 to-blue-500">
+            <div class="flex items-center">
+                <i class="fas fa-map-marker-alt text-3xl text-teal-400 mr-4"></i>
+                <div>
+                    <h3 class="text-xl font-bold bg-text mb-2">Venues</h3>
+                    <p class="text-gray-300">View, add, or edit venues.</p>
+                </div>
+            </div>
+        </a>
+
+        <!-- Session Management Option -->
+        <a href="{{ url_for('sessions') }}" class="bg-gray-800 p-6 rounded-lg shadow-lg transition-all transform hover:scale-105 hover:bg-gradient-to-r from-cyan-500 to-blue-500">
+            <div class="flex items-center">
+                <i class="fas fa-clock text-3xl text-teal-400 mr-4"></i>
+                <div>
+                    <h3 class="text-xl font-bold bg-text mb-2">Sessions</h3>
+                    <p class="text-gray-300">Manage exam sessions.</p>
+                </div>
+            </div>
+        </a>
+
+        <!-- Time Management Option -->
+        <a href="{{ url_for('time') }}" class="bg-gray-800 p-6 rounded-lg shadow-lg transition-all transform hover:scale-105 hover:bg-gradient-to-r from-cyan-500 to-blue-500">
+            <div class="flex items-center">
+                <i class="fas fa-calendar-alt text-3xl text-teal-400 mr-4"></i>
+                <div>
+                    <h3 class="text-xl font-bold bg-text mb-2">Time</h3>
+                    <p class="text-gray-300">Set exam times.</p>
+                </div>
+            </div>
+        </a>
+
+        
+      <!-- User Management Option -->
+      <a href="{{ url_for('departments') }}" class="bg-gray-800 p-6 rounded-lg shadow-lg transition-all transform hover:scale-105 hover:bg-gradient-to-r from-cyan-500 to-blue-500">
+        <div class="flex items-center">
+            <i class="fas fa-cogs text-3xl text-teal-400 mr-4"></i>
+            <div>
+                <h3 class="text-xl font-bold bg-text mb-2">Departments</h3>
+                <p class="text-gray-300">Manage Departments in the system.</p>
+            </div>
+        </div>
+    </a>
+        <!-- User Management Option -->
+        <a href="{{ url_for('admin_user_management') }}" class="bg-gray-800 p-6 rounded-lg shadow-lg transition-all transform hover:scale-105 hover:bg-gradient-to-r from-cyan-500 to-blue-500">
+            <div class="flex items-center">
+                <i class="fas fa-users-cog text-3xl text-teal-400 mr-4"></i>
+                <div>
+                    <h3 class="text-xl font-bold bg-text mb-2">User Management</h3>
+                    <p class="text-gray-300">Manage users in the system.</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+{% endblock %}

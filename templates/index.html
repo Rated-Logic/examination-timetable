@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Exam Scheduler</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet">
+    <style>
+        .gradiant {
+            background: linear-gradient(95deg, #059DFF 15%, #6549D5 45%, #E33FA1 75%, #FB5343 100%) 95%/200% 100%;
+        }
+        .bg-text {
+            background: linear-gradient(95deg, #059DFF 15%, #6549D5 45%, #E33FA1 75%, #FB5343 100%) 95%/200% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 to-black text-gray-300 overflow-hidden">
+    <div class="w-full h-screen flex flex-col justify-center items-center text-center">
+        <div class="relative bg-[url('{{ url_for('static', filename='logo.jpg') }}')] bg-cover bg-no-repeat w-full h-full py-20">
+            <div class="absolute top-0 right-0 opacity-30 w-1/5 h-1/5 gradiant rounded-full blur-3xl"></div>
+            <div class="absolute top-1/2 left-0 opacity-10 w-1/2 h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full blur-3xl transform -translate-y-1/2"></div>
+
+            <div class="relative z-10 w-11/12 mx-auto h-full flex flex-col justify-center items-center">
+                <h1 class="xl:text-7xl lg:text-6xl md:text-5xl text-4xl font-semibold">Effortlessly Manage Your</h1>
+                <h1 class="xl:text-7xl lg:text-6xl md:text-5xl text-4xl font-semibold bg-text">Exams!</h1>
+                <p class="lg:text-3xl sm:text-xl text-lg lg:my-6 my-2">Streamline your exam scheduling process with our easy-to-use app. Whether you're a student or an invigilator, our platform provides all the tools you need to manage your exam schedules efficiently.</p>
+
+                <!-- Buttons -->
+                <div class="flex flex-wrap justify-center gap-4 lg:mt-4 mt-2">
+                    <a href="{{ url_for('login') }}" class="md:px-8 px-4 md:py-4 py-2 md:text-xl text-lg font-semibold rounded-md gradiant cursor-pointer text-center">Log in</a>
+                    <a href="{{ url_for('register') }}" class="md:px-8 px-4 md:py-4 py-2 md:text-xl text-lg font-semibold outline outline-2 rounded-md cursor-pointer text-center">Register</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

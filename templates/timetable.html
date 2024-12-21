@@ -1,0 +1,131 @@
+{% extends 'admin_sidebar.html' %}
+
+{% block content %}
+<h2 class="text-2xl font-bold text-teal-400 mb-4">Timetable Management</h2>
+
+<!-- Tab Navigation for Timetable Management -->
+<div class="mb-6">
+    <ul class="flex space-x-4 text-lg">
+        <li class="cursor-pointer px-4 py-2 bg-teal-400 text-white rounded-md hover:bg-teal-500" id="view-timetable-tab">View Current Timetable</li>
+        <li class="cursor-pointer px-4 py-2 bg-teal-400 text-white rounded-md hover:bg-teal-500" id="generate-timetable-tab">Generate New Timetable</li>
+    </ul>
+</div>
+
+<!-- View Current Timetable Section -->
+<div id="view-timetable" class="hidden">
+    <h3 class="text-xl font-semibold text-teal-400 mb-4">Current Timetable</h3>
+    <!-- Current Timetable Table -->
+    <table class="min-w-full bg-gray-700 rounded-md shadow-lg">
+        <thead>
+            <tr class="bg-gray-800">
+                <th class="p-3 text-left text-teal-400">Day</th>
+                <th class="p-3 text-left text-teal-400">Time</th>
+                <th class="p-3 text-left text-teal-400">Module</th>
+                <th class="p-3 text-left text-teal-400">No. of Students</th>
+                <th class="p-3 text-left text-teal-400">Venue</th>
+                <th class="p-3 text-left text-teal-400">Class</th>
+                <th class="p-3 text-left text-teal-400">Invigilator</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Example row, this would be dynamically populated -->
+            <tr class="bg-gray-600">
+                <td class="p-3">Monday</td>
+                <td class="p-3">10:00 AM</td>
+                <td class="p-3">Algebra</td>
+                <td class="p-3">60</td>
+                <td class="p-3">Room 101</td>
+                <td class="p-3">CS101</td>
+                <td class="p-3">John Doe</td>
+            </tr>
+            <!-- More rows will be dynamically added -->
+        </tbody>
+    </table>
+</div>
+
+<!-- Generate New Timetable Section -->
+<div id="generate-timetable" class="hidden">
+    <h3 class="text-xl font-semibold text-teal-400 mb-4">Generate New Timetable</h3>
+    
+    <!-- Date Picker for Exam Days -->
+    <div class="mb-4">
+        <label for="start-date" class="block text-teal-400">Select Start Date</label>
+        <input type="date" id="start-date" class="w-full p-2 bg-gray-600 text-teal-400 rounded-md" required>
+    </div>
+    
+    <div class="mb-4">
+        <label for="end-date" class="block text-teal-400">Select End Date</label>
+        <input type="date" id="end-date" class="w-full p-2 bg-gray-600 text-teal-400 rounded-md" required>
+    </div>
+
+    <!-- Button to Generate Timetable -->
+    <button id="generate-timetable-btn" class="px-4 py-2 bg-teal-400 text-white rounded-md hover:bg-teal-500">Generate Timetable</button>
+</div>
+
+<script>
+    // Show the correct tab content based on the selected tab
+    document.getElementById('view-timetable-tab').addEventListener('click', function() {
+        document.getElementById('view-timetable').classList.remove('hidden');
+        document.getElementById('generate-timetable').classList.add('hidden');
+    });
+
+    document.getElementById('generate-timetable-tab').addEventListener('click', function() {
+        document.getElementById('generate-timetable').classList.remove('hidden');
+        document.getElementById('view-timetable').classList.add('hidden');
+    });
+
+    // Handle the form submission for generating a new timetable (just for frontend view)
+    document.getElementById('generate-timetable-btn').addEventListener('click', function(event) {
+        event.preventDefault();
+
+        // Get the values from the form
+        const startDate = document.getElementById('start-date').value;
+        const endDate = document.getElementById('end-date').value;
+
+        // Mock data to populate timetable after generation (this would be dynamically populated in a real app)
+        const generatedTimetable = [
+            {
+                day: "Monday",
+                time: "10:00 AM",
+                module: "Algebra",
+                students: 60,
+                venue: "Room 101",
+                class: "CS101",
+                invigilator: "John Doe"
+            },
+            {
+                day: "Tuesday",
+                time: "12:00 PM",
+                module: "Fundamentals of Programming",
+                students: 80,
+                venue: "Room 102",
+                class: "CS102",
+                invigilator: "Jane Smith"
+            }
+            // More rows can be added dynamically
+        ];
+
+        // Populate the current timetable table with generated data
+        const timetableTableBody = document.querySelector('#view-timetable tbody');
+        timetableTableBody.innerHTML = ""; // Clear the existing table content
+        generatedTimetable.forEach(entry => {
+            const newRow = document.createElement('tr');
+            newRow.classList.add('bg-gray-600');
+            newRow.innerHTML = `
+                <td class="p-3">${entry.day}</td>
+                <td class="p-3">${entry.time}</td>
+                <td class="p-3">${entry.module}</td>
+                <td class="p-3">${entry.students}</td>
+                <td class="p-3">${entry.venue}</td>
+                <td class="p-3">${entry.class}</td>
+                <td class="p-3">${entry.invigilator}</td>
+            `;
+            timetableTableBody.appendChild(newRow);
+        });
+
+        // Optionally, you can send the data to the backend for processing
+        // Example: send a POST request to the server to generate the timetable
+    });
+</script>
+
+{% endblock %}
