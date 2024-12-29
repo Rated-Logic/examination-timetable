@@ -1,0 +1,142 @@
+{% extends 'admin_sidebar.html' %}
+
+{% block content %}
+<h2 class="text-2xl font-bold text-teal-400 mb-4">Venue Management</h2>
+
+<!-- Add Venue Button -->
+<div class="mb-4">
+    <a href="#" id="add-venue-btn" class="px-4 py-2 bg-teal-400 text-white rounded-md hover:bg-teal-500">Add Venue</a>
+</div>
+
+<!-- Venue Management Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- Venue Card -->
+    <div class="bg-gray-700 p-6 rounded-lg shadow-lg">
+        <h3 class="text-xl font-semibold text-teal-400 mb-2">Venue A</h3>
+        <p class="text-gray-300 mb-4">Capacity: 100</p>
+        <div class="flex space-x-4">
+            <a href="#" class="edit-venue-btn text-teal-400 hover:text-teal-500" data-name="Venue A" data-capacity="100">Edit</a>
+            <a href="#" class="delete-venue-btn text-red-500 hover:text-red-600" data-name="Venue A">Delete</a>
+        </div>
+    </div>
+
+    <!-- Venue Card -->
+    <div class="bg-gray-700 p-6 rounded-lg shadow-lg">
+        <h3 class="text-xl font-semibold text-teal-400 mb-2">Venue B</h3>
+        <p class="text-gray-300 mb-4">Capacity: 150</p>
+        <div class="flex space-x-4">
+            <a href="#" class="edit-venue-btn text-teal-400 hover:text-teal-500" data-name="Venue B" data-capacity="150">Edit</a>
+            <a href="#" class="delete-venue-btn text-red-500 hover:text-red-600" data-name="Venue B">Delete</a>
+        </div>
+    </div>
+
+    <!-- Venue Card -->
+    <div class="bg-gray-700 p-6 rounded-lg shadow-lg">
+        <h3 class="text-xl font-semibold text-teal-400 mb-2">Venue C</h3>
+        <p class="text-gray-300 mb-4">Capacity: 200</p>
+        <div class="flex space-x-4">
+            <a href="#" class="edit-venue-btn text-teal-400 hover:text-teal-500" data-name="Venue C" data-capacity="200">Edit</a>
+            <a href="#" class="delete-venue-btn text-red-500 hover:text-red-600" data-name="Venue C">Delete</a>
+        </div>
+    </div>
+</div>
+
+<!-- Add Venue Modal -->
+<div id="add-venue-modal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center hidden">
+    <div class="bg-gray-700 p-8 rounded-lg shadow-lg w-96">
+        <h3 class="text-2xl font-semibold text-teal-400 mb-4">Add New Venue</h3>
+        <form id="add-venue-form">
+            <div class="mb-4">
+                <label for="venue-name" class="block text-teal-400">Venue Name</label>
+                <input type="text" id="venue-name" name="venue-name" class="w-full p-2 bg-gray-600 text-teal-400 rounded-md" required>
+            </div>
+            <div class="mb-4">
+                <label for="venue-capacity" class="block text-teal-400">Capacity</label>
+                <input type="number" id="venue-capacity" name="venue-capacity" class="w-full p-2 bg-gray-600 text-teal-400 rounded-md" required>
+            </div>
+            <button type="submit" class="px-4 py-2 bg-teal-400 text-white rounded-md hover:bg-teal-500">Add Venue</button>
+            <button type="button" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 mt-4" id="cancel-add-venue">Cancel</button>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Venue Modal -->
+<div id="edit-venue-modal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center hidden">
+    <div class="bg-gray-700 p-8 rounded-lg shadow-lg w-96">
+        <h3 class="text-2xl font-semibold text-teal-400 mb-4">Edit Venue</h3>
+        <form id="edit-venue-form">
+            <div class="mb-4">
+                <label for="edit-venue-name" class="block text-teal-400">Venue Name</label>
+                <input type="text" id="edit-venue-name" name="edit-venue-name" class="w-full p-2 bg-gray-600 text-teal-400 rounded-md" required>
+            </div>
+            <div class="mb-4">
+                <label for="edit-venue-capacity" class="block text-teal-400">Capacity</label>
+                <input type="number" id="edit-venue-capacity" name="edit-venue-capacity" class="w-full p-2 bg-gray-600 text-teal-400 rounded-md" required>
+            </div>
+            <button type="submit" class="px-4 py-2 bg-teal-400 text-white rounded-md hover:bg-teal-500">Save Changes</button>
+            <button type="button" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 mt-4" id="cancel-edit-venue">Cancel</button>
+        </form>
+    </div>
+</div>
+
+<!-- Delete Venue Modal -->
+<div id="delete-venue-modal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center hidden">
+    <div class="bg-gray-700 p-8 rounded-lg shadow-lg w-96">
+        <h3 class="text-2xl font-semibold text-teal-400 mb-4">Are you sure you want to delete this venue?</h3>
+        <div class="flex space-x-4">
+            <button type="button" class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600" id="delete-venue-btn">Delete</button>
+            <button type="button" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700" id="cancel-delete-venue">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Open Add Venue Modal
+    document.getElementById('add-venue-btn').addEventListener('click', () => {
+        document.getElementById('add-venue-modal').classList.remove('hidden');
+    });
+
+    // Close Add Venue Modal
+    document.getElementById('cancel-add-venue').addEventListener('click', () => {
+        document.getElementById('add-venue-modal').classList.add('hidden');
+    });
+
+    // Open Edit Venue Modal and Pre-fill Data
+    document.querySelectorAll('.edit-venue-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const venueName = e.target.getAttribute('data-name');
+            const venueCapacity = e.target.getAttribute('data-capacity');
+            document.getElementById('edit-venue-name').value = venueName;
+            document.getElementById('edit-venue-capacity').value = venueCapacity;
+            document.getElementById('edit-venue-modal').classList.remove('hidden');
+        });
+    });
+
+    // Close Edit Venue Modal
+    document.getElementById('cancel-edit-venue').addEventListener('click', () => {
+        document.getElementById('edit-venue-modal').classList.add('hidden');
+    });
+
+    // Open Delete Venue Modal
+    document.querySelectorAll('.delete-venue-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const venueName = e.target.getAttribute('data-name');
+            document.getElementById('delete-venue-btn').setAttribute('data-name', venueName);
+            document.getElementById('delete-venue-modal').classList.remove('hidden');
+        });
+    });
+
+    // Close Delete Venue Modal
+    document.getElementById('cancel-delete-venue').addEventListener('click', () => {
+        document.getElementById('delete-venue-modal').classList.add('hidden');
+    });
+
+    // Handle Delete Venue Action
+    document.getElementById('delete-venue-btn').addEventListener('click', () => {
+        const venueName = document.getElementById('delete-venue-btn').getAttribute('data-name');
+        alert(`Venue ${venueName} will be deleted!`);
+        document.getElementById('delete-venue-modal').classList.add('hidden');
+    });
+</script>
+
+{% endblock %}

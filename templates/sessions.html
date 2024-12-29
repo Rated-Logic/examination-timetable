@@ -1,0 +1,143 @@
+{% extends 'admin_sidebar.html' %}
+
+{% block content %}
+<h2 class="text-2xl font-bold text-teal-400 mb-4">Session Management</h2>
+
+<!-- Add Session Button -->
+<div class="mb-4">
+    <a href="#" id="add-session-btn" class="px-4 py-2 bg-teal-400 text-white rounded-md hover:bg-teal-500">Add Session</a>
+</div>
+
+<!-- Session Management Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- Session Card -->
+    <div class="bg-gray-700 p-6 rounded-lg shadow-lg">
+        <h3 class="text-xl font-semibold text-teal-400 mb-2">Session A</h3>
+        <p class="text-gray-300 mb-4">Time: 10:00 AM - 12:00 PM</p>
+        <div class="flex space-x-4">
+            <a href="#" class="edit-session-btn text-teal-400 hover:text-teal-500" data-name="Session A" data-time="10:00 AM - 12:00 PM">Edit</a>
+            <a href="#" class="delete-session-btn text-red-500 hover:text-red-600" data-name="Session A">Delete</a>
+        </div>
+    </div>
+
+    <!-- Session Card -->
+    <div class="bg-gray-700 p-6 rounded-lg shadow-lg">
+        <h3 class="text-xl font-semibold text-teal-400 mb-2">Session B</h3>
+        <p class="text-gray-300 mb-4">Time: 1:00 PM - 3:00 PM</p>
+        <div class="flex space-x-4">
+            <a href="#" class="edit-session-btn text-teal-400 hover:text-teal-500" data-name="Session B" data-time="1:00 PM - 3:00 PM">Edit</a>
+            <a href="#" class="delete-session-btn text-red-500 hover:text-red-600" data-name="Session B">Delete</a>
+        </div>
+    </div>
+
+    <!-- Session Card -->
+    <div class="bg-gray-700 p-6 rounded-lg shadow-lg">
+        <h3 class="text-xl font-semibold text-teal-400 mb-2">Session C</h3>
+        <p class="text-gray-300 mb-4">Time: 3:30 PM - 5:30 PM</p>
+        <div class="flex space-x-4">
+            <a href="#" class="edit-session-btn text-teal-400 hover:text-teal-500" data-name="Session C" data-time="3:30 PM - 5:30 PM">Edit</a>
+            <a href="#" class="delete-session-btn text-red-500 hover:text-red-600" data-name="Session C">Delete</a>
+        </div>
+    </div>
+</div>
+
+<!-- Add Session Modal -->
+<div id="add-session-modal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center hidden">
+    <div class="bg-gray-700 p-8 rounded-lg shadow-lg w-96">
+        <h3 class="text-2xl font-semibold text-teal-400 mb-4">Add New Session</h3>
+        <form id="add-session-form">
+            <div class="mb-4">
+                <label for="session-name" class="block text-teal-400">Session Name</label>
+                <input type="text" id="session-name" name="session-name" class="w-full p-2 bg-gray-600 text-teal-400 rounded-md" required>
+            </div>
+            <div class="mb-4">
+                <label for="session-time" class="block text-teal-400">Session Time</label>
+                <input type="text" id="session-time" name="session-time" class="w-full p-2 bg-gray-600 text-teal-400 rounded-md" required>
+            </div>
+            <button type="submit" class="px-4 py-2 bg-teal-400 text-white rounded-md hover:bg-teal-500">Add Session</button>
+            <button type="button" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 mt-4" id="cancel-add-session">Cancel</button>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Session Modal -->
+<div id="edit-session-modal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center hidden">
+    <div class="bg-gray-700 p-8 rounded-lg shadow-lg w-96">
+        <h3 class="text-2xl font-semibold text-teal-400 mb-4">Edit Session</h3>
+        <form id="edit-session-form">
+            <div class="mb-4">
+                <label for="edit-session-name" class="block text-teal-400">Session Name</label>
+                <input type="text" id="edit-session-name" name="edit-session-name" class="w-full p-2 bg-gray-600 text-teal-400 rounded-md" required>
+            </div>
+            <div class="mb-4">
+                <label for="edit-session-time" class="block text-teal-400">Session Time</label>
+                <input type="text" id="edit-session-time" name="edit-session-time" class="w-full p-2 bg-gray-600 text-teal-400 rounded-md" required>
+            </div>
+            <button type="submit" class="px-4 py-2 bg-teal-400 text-white rounded-md hover:bg-teal-500">Save Changes</button>
+            <button type="button" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 mt-4" id="cancel-edit-session">Cancel</button>
+        </form>
+    </div>
+</div>
+
+<!-- Delete Session Modal -->
+<div id="delete-session-modal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center hidden">
+    <div class="bg-gray-700 p-8 rounded-lg shadow-lg w-96">
+        <h3 class="text-2xl font-semibold text-teal-400 mb-4">Are you sure you want to delete this session?</h3>
+        <div class="flex space-x-4">
+            <button type="button" class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600" id="delete-session-btn">Delete</button>
+            <button type="button" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700" id="cancel-delete-session">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Session Modal logic (similar to Venue)
+    // Open Add Session Modal
+    document.getElementById('add-session-btn').addEventListener('click', () => {
+        document.getElementById('add-session-modal').classList.remove('hidden');
+    });
+
+    // Close Add Session Modal
+    document.getElementById('cancel-add-session').addEventListener('click', () => {
+        document.getElementById('add-session-modal').classList.add('hidden');
+    });
+
+    // Open Edit Session Modal and Pre-fill Data
+    document.querySelectorAll('.edit-session-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const sessionName = e.target.getAttribute('data-name');
+            const sessionTime = e.target.getAttribute('data-time');
+            document.getElementById('edit-session-name').value = sessionName;
+            document.getElementById('edit-session-time').value = sessionTime;
+            document.getElementById('edit-session-modal').classList.remove('hidden');
+        });
+    });
+
+    // Close Edit Session Modal
+    document.getElementById('cancel-edit-session').addEventListener('click', () => {
+        document.getElementById('edit-session-modal').classList.add('hidden');
+    });
+
+    // Open Delete Session Modal
+    document.querySelectorAll('.delete-session-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const sessionName = e.target.getAttribute('data-name');
+            document.getElementById('delete-session-btn').setAttribute('data-name', sessionName);
+            document.getElementById('delete-session-modal').classList.remove('hidden');
+        });
+    });
+
+    // Close Delete Session Modal
+    document.getElementById('cancel-delete-session').addEventListener('click', () => {
+        document.getElementById('delete-session-modal').classList.add('hidden');
+    });
+
+    // Handle Delete Session Action
+    document.getElementById('delete-session-btn').addEventListener('click', () => {
+        const sessionName = document.getElementById('delete-session-btn').getAttribute('data-name');
+        alert(`Session ${sessionName} will be deleted!`);
+        document.getElementById('delete-session-modal').classList.add('hidden');
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "invigilator_sidebar.html" %}
+
+{% block title %}Invigilator Dashboard{% endblock %}
+
+{% block content %}
+
+<main class="container mx-auto px-4 py-8">
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-bold text-teal-400 mb-4">Assigned Examinations</h2>
+        <table class="min-w-full bg-gray-900 text-gray-100">
+            <thead>
+                <tr>
+                    <th class="px-4 py-2 text-teal-400">Day</th>
+                    <th class="px-4 py-2 text-teal-400">Session</th>
+                    <th class="px-4 py-2 text-teal-400">Time</th>
+                    <th class="px-4 py-2 text-teal-400">Class</th>
+                    <th class="px-4 py-2 text-teal-400">Module</th>
+                    <th class="px-4 py-2 text-teal-400">Number of Students</th>
+                    <th class="px-4 py-2 text-teal-400">Venue</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="border px-4 py-2">Monday</td>
+                    <td class="border px-4 py-2">Morning</td>
+                    <td class="border px-4 py-2">9:00 AM - 12:00 PM</td>
+                    <td class="border px-4 py-2">Class A</td>
+                    <td class="border px-4 py-2">Math 101</td>
+                    <td class="border px-4 py-2">50</td>
+                    <td class="border px-4 py-2">Room 101</td>
+                </tr>
+            </tbody>
+        </table>
+        
+    </div>
+</main>
+{% endblock %}

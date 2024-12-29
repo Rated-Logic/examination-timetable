@@ -1,0 +1,133 @@
+{% extends 'admin_sidebar.html' %}
+
+{% block content %}
+<h2 class="text-2xl font-bold text-teal-400 mb-4">Time Management</h2>
+
+<!-- Add Time Button -->
+<div class="mb-4">
+    <a href="#" id="add-time-btn" class="px-4 py-2 bg-teal-400 text-white rounded-md hover:bg-teal-500">Add Time</a>
+</div>
+
+<!-- Time Management Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- Time Card -->
+    <div class="bg-gray-700 p-6 rounded-lg shadow-lg">
+        <h3 class="text-xl font-semibold text-teal-400 mb-2">9:00 AM - 11:00 AM</h3>
+        <p class="text-gray-300 mb-4">Session 1</p>
+        <div class="flex space-x-4">
+            <a href="#" class="edit-time-btn text-teal-400 hover:text-teal-500" data-time="9:00 AM - 11:00 AM">Edit</a>
+            <a href="#" class="delete-time-btn text-red-500 hover:text-red-600" data-time="9:00 AM - 11:00 AM">Delete</a>
+        </div>
+    </div>
+
+    <!-- Time Card -->
+    <div class="bg-gray-700 p-6 rounded-lg shadow-lg">
+        <h3 class="text-xl font-semibold text-teal-400 mb-2">12:00 PM - 2:00 PM</h3>
+        <p class="text-gray-300 mb-4">Session 2</p>
+        <div class="flex space-x-4">
+            <a href="#" class="edit-time-btn text-teal-400 hover:text-teal-500" data-time="12:00 PM - 2:00 PM">Edit</a>
+            <a href="#" class="delete-time-btn text-red-500 hover:text-red-600" data-time="12:00 PM - 2:00 PM">Delete</a>
+        </div>
+    </div>
+
+    <!-- Time Card -->
+    <div class="bg-gray-700 p-6 rounded-lg shadow-lg">
+        <h3 class="text-xl font-semibold text-teal-400 mb-2">3:00 PM - 5:00 PM</h3>
+        <p class="text-gray-300 mb-4">Session 3</p>
+        <div class="flex space-x-4">
+            <a href="#" class="edit-time-btn text-teal-400 hover:text-teal-500" data-time="3:00 PM - 5:00 PM">Edit</a>
+            <a href="#" class="delete-time-btn text-red-500 hover:text-red-600" data-time="3:00 PM - 5:00 PM">Delete</a>
+        </div>
+    </div>
+</div>
+
+<!-- Add Time Modal -->
+<div id="add-time-modal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center hidden">
+    <div class="bg-gray-700 p-8 rounded-lg shadow-lg w-96">
+        <h3 class="text-2xl font-semibold text-teal-400 mb-4">Add New Time</h3>
+        <form id="add-time-form">
+            <div class="mb-4">
+                <label for="time-range" class="block text-teal-400">Time Range</label>
+                <input type="text" id="time-range" name="time-range" class="w-full p-2 bg-gray-600 text-teal-400 rounded-md" required>
+            </div>
+            <button type="submit" class="px-4 py-2 bg-teal-400 text-white rounded-md hover:bg-teal-500">Add Time</button>
+            <button type="button" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 mt-4" id="cancel-add-time">Cancel</button>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Time Modal -->
+<div id="edit-time-modal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center hidden">
+    <div class="bg-gray-700 p-8 rounded-lg shadow-lg w-96">
+        <h3 class="text-2xl font-semibold text-teal-400 mb-4">Edit Time</h3>
+        <form id="edit-time-form">
+            <div class="mb-4">
+                <label for="edit-time-range" class="block text-teal-400">Time Range</label>
+                <input type="text" id="edit-time-range" name="edit-time-range" class="w-full p-2 bg-gray-600 text-teal-400 rounded-md" required>
+            </div>
+            <button type="submit" class="px-4 py-2 bg-teal-400 text-white rounded-md hover:bg-teal-500">Save Changes</button>
+            <button type="button" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 mt-4" id="cancel-edit-time">Cancel</button>
+        </form>
+    </div>
+</div>
+
+<!-- Delete Time Modal -->
+<div id="delete-time-modal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center hidden">
+    <div class="bg-gray-700 p-8 rounded-lg shadow-lg w-96">
+        <h3 class="text-2xl font-semibold text-teal-400 mb-4">Are you sure you want to delete this time?</h3>
+        <div class="flex space-x-4">
+            <button type="button" class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600" id="delete-time-btn">Delete</button>
+            <button type="button" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700" id="cancel-delete-time">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Time Modal logic (similar to Venue)
+    // Open Add Time Modal
+    document.getElementById('add-time-btn').addEventListener('click', () => {
+        document.getElementById('add-time-modal').classList.remove('hidden');
+    });
+
+    // Close Add Time Modal
+    document.getElementById('cancel-add-time').addEventListener('click', () => {
+        document.getElementById('add-time-modal').classList.add('hidden');
+    });
+
+    // Open Edit Time Modal and Pre-fill Data
+    document.querySelectorAll('.edit-time-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const timeRange = e.target.getAttribute('data-time');
+            document.getElementById('edit-time-range').value = timeRange;
+            document.getElementById('edit-time-modal').classList.remove('hidden');
+        });
+    });
+
+    // Close Edit Time Modal
+    document.getElementById('cancel-edit-time').addEventListener('click', () => {
+        document.getElementById('edit-time-modal').classList.add('hidden');
+    });
+
+    // Open Delete Time Modal
+    document.querySelectorAll('.delete-time-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const timeRange = e.target.getAttribute('data-time');
+            document.getElementById('delete-time-btn').setAttribute('data-time', timeRange);
+            document.getElementById('delete-time-modal').classList.remove('hidden');
+        });
+    });
+
+    // Close Delete Time Modal
+    document.getElementById('cancel-delete-time').addEventListener('click', () => {
+        document.getElementById('delete-time-modal').classList.add('hidden');
+    });
+
+    // Handle Delete Time Action
+    document.getElementById('delete-time-btn').addEventListener('click', () => {
+        const timeRange = document.getElementById('delete-time-btn').getAttribute('data-time');
+        alert(`Time range ${timeRange} will be deleted!`);
+        document.getElementById('delete-time-modal').classList.add('hidden');
+    });
+</script>
+
+{% endblock %}

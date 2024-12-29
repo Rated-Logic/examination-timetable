@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Sidebar</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        /* Add transition effect for theme switch */
+        .transition-theme {
+            transition: background-color 0.3s, color 0.3s;
+        }
+        /* Ensure the header doesn't push the content down */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+        }
+        /* Add margin to the main content and sidebar to make room for the header */
+        body {
+            margin-top: 4rem; /* Adjust this to the height of your header */
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-300 flex transition-theme" id="body">
+
+<!-- Header (Top Bar) Start -->
+<header class="w-full bg-gray-800 p-4 flex justify-between items-center">
+    <h1 class="text-2xl font-bold text-teal-400">TestXpert</h1>
+    <button id="theme-toggle" class="text-2xl text-gray-300 hover:text-teal-400 transition-all">
+        <i id="theme-icon" class="fas fa-moon"></i>
+    </button>
+</header>
+<!-- Header (Top Bar) End -->
+
+<!-- Sidebar Start -->
+<aside class="w-64 bg-gray-800 p-6 h-screen transition-theme" id="sidebar">
+    <nav>
+        <ul class="space-y-4">
+            <li><a href="{{ url_for('admin_dashboard') }}" class="flex items-center hover:text-teal-400"><i class="fas fa-tachometer-alt mr-3"></i>Dashboard</a></li>
+            <li><a href="{{ url_for('admin_user_management') }}" class="flex items-center hover:text-teal-400"><i class="fas fa-users mr-3"></i>User Management</a></li>
+            <li><a href="{{ url_for('admin_venue') }}" class="flex items-center hover:text-teal-400"><i class="fas fa-building mr-3"></i>Venue Management</a></li>
+            <li><a href="{{ url_for('sessions') }}" class="flex items-center hover:text-teal-400"><i class="fas fa-calendar-alt mr-3"></i>Session Management</a></li>
+            <li><a href="{{ url_for('time') }}" class="flex items-center hover:text-teal-400"><i class="fas fa-clock mr-3"></i>Time Management</a></li>
+            <li><a href="{{ url_for('timetable') }}" class="flex items-center hover:text-teal-400"><i class="fas fa-table mr-3"></i>Timetable Management</a></li>
+            <li><a href="{{ url_for('departments') }}" class="flex items-center hover:text-teal-400"><i class="fas fa-cogs mr-3"></i>Department Management</a></li>
+            <li><a href="{{ url_for('login') }}" class="flex items-center hover:text-teal-400"><i class="fas fa-sign-out-alt mr-3"></i>Logout</a></li>
+        </ul>
+    </nav>
+</aside>
+<!-- Sidebar End -->
+
+<!-- Main Content Start -->
+<main class="flex-1 p-8 transition-theme" id="main-content">
+    <!-- Content Will Be Injected Here -->
+    {% block content %}
+    {% endblock %}
+</main>
+<!-- Main Content End -->
+
+<script>
+    // Get the theme toggle button, icon, and body
+    const themeToggleButton = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    const body = document.getElementById('body');
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('main-content');
+
+    // Check if dark mode is already enabled
+    if (localStorage.getItem('theme') === 'dark') {
+        body.classList.add('bg-gray-900', 'text-gray-300');
+        sidebar.classList.add('bg-gray-800');
+        mainContent.classList.add('bg-gray-900', 'text-gray-300');
+        themeIcon.classList.remove('fa-moon');
+        themeIcon.classList.add('fa-sun');
+    } else {
+        body.classList.add('bg-gray-100', 'text-gray-900');
+        sidebar.classList.add('bg-gray-100');
+        mainContent.classList.add('bg-gray-100', 'text-gray-900');
+        themeIcon.classList.remove('fa-sun');
+        themeIcon.classList.add('fa-moon');
+    }
+
+    // Toggle theme on button click
+    themeToggleButton.addEventListener('click', () => {
+        if (body.classList.contains('bg-gray-900')) {
+            // Switch to light mode
+            body.classList.remove('bg-gray-900', 'text-gray-300');
+            body.classList.add('bg-gray-100', 'text-gray-900');
+            sidebar.classList.remove('bg-gray-800');
+            sidebar.classList.add('bg-gray-100');
+            mainContent.classList.remove('bg-gray-900', 'text-gray-300');
+            mainContent.classList.add('bg-gray-100', 'text-gray-900');
+            themeIcon.classList.remove('fa-sun');
+            themeIcon.classList.add('fa-moon');
+            localStorage.setItem('theme', 'light');
+        } else {
+            // Switch to dark mode
+            body.classList.remove('bg-gray-100', 'text-gray-900');
+            body.classList.add('bg-gray-900', 'text-gray-300');
+            sidebar.classList.remove('bg-gray-100');
+            sidebar.classList.add('bg-gray-800');
+            mainContent.classList.remove('bg-gray-100', 'text-gray-900');
+            mainContent.classList.add('bg-gray-900', 'text-gray-300');
+            themeIcon.classList.remove('fa-moon');
+            themeIcon.classList.add('fa-sun');
+            localStorage.setItem('theme', 'dark');
+        }
+    });
+</script>
+
+</body>
+</html>

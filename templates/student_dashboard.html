@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examination Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet">
+    <style>
+        .gradiant {
+            background: linear-gradient(95deg, #059DFF 15%, #6549D5 45%, #E33FA1 75%, #FB5343 100%) 95%/200% 100%;
+        }
+        .bg-text {
+            background: linear-gradient(95deg, #059DFF 15%, #6549D5 45%, #E33FA1 75%, #FB5343 100%) 95%/200% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 to-black text-gray-300 overflow-hidden">
+
+<!-- Shared Navbar Start -->
+<header class="bg-gray-800 py-4 shadow-lg">
+    <div class="container mx-auto flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-teal-400">TestXpert</h1>
+        <nav>
+            <ul class="flex space-x-6">
+                <li><a href="{{ url_for('student_dashboard') }}" class="hover:text-teal-400">Home</a></li>
+                <li><a href="{{ url_for('student_profile') }}" class="hover:text-teal-400">Profile</a></li>
+                <li><a href="{{ url_for('login') }}" class="hover:text-teal-400">Logout</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+<!-- Shared Navbar End -->
+
+<main class="container mx-auto px-4 py-8">
+    <h2 class="text-xl font-semibold text-teal-400 mb-4">Upcoming Examinations</h2>
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-gray-800 rounded-lg">
+            <thead>
+                <tr class="bg-teal-600 text-gray-100">
+                    <th class="px-4 py-2">Exam Name</th>
+                    <th class="px-4 py-2">Course</th>
+                    <th class="px-4 py-2">Date</th>
+                    <th class="px-4 py-2">Time</th>
+                    <th class="px-4 py-2">Venue</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="hover:bg-gray-700">
+                    <td class="border px-4 py-2">Math Final Exam</td>
+                    <td class="border px-4 py-2">Mathematics 101</td>
+                    <td class="border px-4 py-2">2024-12-25</td>
+                    <td class="border px-4 py-2">09:00 AM</td>
+                    <td class="border px-4 py-2">Hall A</td>
+                </tr>
+                <tr class="hover:bg-gray-700">
+                    <td class="border px-4 py-2">Physics Midterm</td>
+                    <td class="border px-4 py-2">Physics 201</td>
+                    <td class="border px-4 py-2">2024-12-26</td>
+                    <td class="border px-4 py-2">11:00 AM</td>
+                    <td class="border px-4 py-2">Hall B</td>
+                </tr>
+                <tr class="hover:bg-gray-700">
+                    <td class="border px-4 py-2">Chemistry Quiz</td>
+                    <td class="border px-4 py-2">Chemistry 102</td>
+                    <td class="border px-4 py-2">2024-12-27</td>
+                    <td class="border px-4 py-2">01:00 PM</td>
+                    <td class="border px-4 py-2">Lab 1</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<footer class="bg-gray-800 py-4 mt-8">
+    <div class="container mx-auto text-center text-gray-400">
+        <p>&copy; 2024 Examination Scheduler. All Rights Reserved.</p>
+    </div>
+</footer>
+
+</body>
+</html>
