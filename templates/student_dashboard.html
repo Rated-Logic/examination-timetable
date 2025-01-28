@@ -23,12 +23,16 @@
 <!-- Shared Navbar Start -->
 <header class="bg-gray-800 py-4 shadow-lg">
     <div class="container mx-auto flex justify-between items-center">
-        <h1 class="text-2xl font-bold text-teal-400">TestXpert</h1>
+        <h1 class="text-2xl font-bold text-teal-400">Exam Scheduler</h1>
         <nav>
             <ul class="flex space-x-6">
                 <li><a href="{{ url_for('student_dashboard') }}" class="hover:text-teal-400">Home</a></li>
                 <li><a href="{{ url_for('student_profile') }}" class="hover:text-teal-400">Profile</a></li>
-                <li><a href="{{ url_for('login') }}" class="hover:text-teal-400">Logout</a></li>
+                <li>
+                    <form id="logout-form" class="m-0 p-0">
+                        <button type="submit" class="hover:text-teal-400">Logout</button>
+                    </form>
+                </li>
             </ul>
         </nav>
     </div>
@@ -36,40 +40,22 @@
 <!-- Shared Navbar End -->
 
 <main class="container mx-auto px-4 py-8">
-    <h2 class="text-xl font-semibold text-teal-400 mb-4">Upcoming Examinations</h2>
-    <div class="overflow-x-auto">
-        <table class="min-w-full bg-gray-800 rounded-lg">
+    <h2 class="text-2xl font-bold text-teal-400 mb-6">My Examination Timetable</h2>
+
+    <!-- Timetable Section -->
+    <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+        <table class="min-w-full">
             <thead>
-                <tr class="bg-teal-600 text-gray-100">
-                    <th class="px-4 py-2">Exam Name</th>
-                    <th class="px-4 py-2">Course</th>
-                    <th class="px-4 py-2">Date</th>
-                    <th class="px-4 py-2">Time</th>
-                    <th class="px-4 py-2">Venue</th>
+                <tr class="bg-gray-700">
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-teal-400">Date</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-teal-400">Time</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-teal-400">Module</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-teal-400">Venue</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-teal-400">Invigilator</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr class="hover:bg-gray-700">
-                    <td class="border px-4 py-2">Math Final Exam</td>
-                    <td class="border px-4 py-2">Mathematics 101</td>
-                    <td class="border px-4 py-2">2024-12-25</td>
-                    <td class="border px-4 py-2">09:00 AM</td>
-                    <td class="border px-4 py-2">Hall A</td>
-                </tr>
-                <tr class="hover:bg-gray-700">
-                    <td class="border px-4 py-2">Physics Midterm</td>
-                    <td class="border px-4 py-2">Physics 201</td>
-                    <td class="border px-4 py-2">2024-12-26</td>
-                    <td class="border px-4 py-2">11:00 AM</td>
-                    <td class="border px-4 py-2">Hall B</td>
-                </tr>
-                <tr class="hover:bg-gray-700">
-                    <td class="border px-4 py-2">Chemistry Quiz</td>
-                    <td class="border px-4 py-2">Chemistry 102</td>
-                    <td class="border px-4 py-2">2024-12-27</td>
-                    <td class="border px-4 py-2">01:00 PM</td>
-                    <td class="border px-4 py-2">Lab 1</td>
-                </tr>
+            <tbody id="student-timetable">
+                <!-- Will be populated dynamically -->
             </tbody>
         </table>
     </div>
@@ -81,5 +67,73 @@
     </div>
 </footer>
 
+<script>
+    async function loadStudentTimetable() {
+        try {
+            const response = await fetch('/api/student/timetable');
+            const timetable = await response.json();
+            
+            const tableBody = document.getElementById('student-timetable');
+            tableBody.innerHTML = '';
+            
+            if (timetable.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td colspan="5" class="px-6 py-4 text-center text-gray-400">
+                        No examinations scheduled for your course
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            } else {
+                timetable.forEach(exam => {
+                    const row = document.createElement('tr');
+                    row.className = 'border-t border-gray-700 hover:bg-gray-700';
+                    row.innerHTML = `
+                        <td class="px-6 py-4 text-sm text-gray-300">${formatDate(exam.date)}</td>
+                        <td class="px-6 py-4 text-sm text-gray-300">${exam.start_time} - ${exam.end_time}</td>
+                        <td class="px-6 py-4 text-sm text-gray-300">${exam.module_name}</td>
+                        <td class="px-6 py-4 text-sm text-gray-300">${exam.venue}</td>
+                        <td class="px-6 py-4 text-sm text-gray-300">${exam.invigilator}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+        } catch (error) {
+            console.error('Error loading timetable:', error);
+        }
+    }
+
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+    }
+
+    // Load timetable when page loads
+    document.addEventListener('DOMContentLoaded', loadStudentTimetable);
+
+    document.getElementById('logout-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        try {
+            const response = await fetch('/api/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (response.ok) {
+                window.location.href = '/login';  // Redirect to login page
+            } else {
+                console.error('Logout failed');
+            }
+        } catch (error) {
+            console.error('Error during logout:', error);
+        }
+    });
+</script>
 </body>
 </html>

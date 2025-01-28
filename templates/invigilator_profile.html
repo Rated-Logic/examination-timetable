@@ -1,81 +1,116 @@
-{% extends "invigilator_sidebar.html" %}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invigilator Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet">
+    <style>
+        .gradiant {
+            background: linear-gradient(95deg, #059DFF 15%, #6549D5 45%, #E33FA1 75%, #FB5343 100%) 95%/200% 100%;
+        }
+        .bg-text {
+            background: linear-gradient(95deg, #059DFF 15%, #6549D5 45%, #E33FA1 75%, #FB5343 100%) 95%/200% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 to-black text-gray-300 min-h-screen">
 
-{% block title %}Invigilator Profile{% endblock %}
+<!-- Shared Navbar Start -->
+<header class="bg-gray-800 py-4 shadow-lg sticky top-0 z-50">
+    <div class="container mx-auto flex justify-between items-center px-4">
+        <h1 class="text-2xl font-bold text-teal-400">Exam Scheduler</h1>
+        <nav>
+            <ul class="flex space-x-6">
+                <li><a href="{{ url_for('invigilator_dashboard') }}" class="hover:text-teal-400">Home</a></li>
+                <li><a href="{{ url_for('invigilator_profile') }}" class="hover:text-teal-400">Profile</a></li>
+                <li>
+                    <form id="logout-form" class="m-0 p-0">
+                        <button type="submit" class="hover:text-teal-400">Logout</button>
+                    </form>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</header>
 
-{% block content %}
 <main class="container mx-auto px-4 py-8">
-    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
-        <h2 class="text-2xl font-bold text-teal-400 mb-4">Profile Settings</h2>
-        <form id="profile-form">
-            <div class="bg-gray-700 p-6 rounded-lg shadow-inner space-y-6">
-                <div class="flex items-center">
-                    <i class="fas fa-user text-teal-400 mr-3"></i>
-                    <div>
-                        <h3 class="font-bold text-teal-400">Full Name</h3>
-                        <input type="text" id="full-name" class="mt-1 block w-full border border-gray-600 rounded-md p-2 bg-transparent text-teal-400" placeholder="John Doe" disabled/>
-                    </div>
-                </div>
-                <div class="flex items-center">
-                    <i class="fas fa-id-badge text-teal-400 mr-3"></i>
-                    <div>
-                        <h3 class="font-bold text-teal-400">Registration Number</h3>
-                        <input type="text" id="registration-number" class="mt-1 block w-full border border-gray-600 rounded-md p-2 bg-transparent text-teal-400" placeholder="123456789" disabled/>
-                    </div>
-                </div>
-                <div class="flex items-center">
-                    <i class="fas fa-book text-teal-400 mr-3"></i>
-                    <div>
-                        <h3 class="font-bold text-teal-400">Course</h3>
-                        <input type="text" id="course" class="mt-1 block w-full border border-gray-600 rounded-md p-2 bg-transparent text-teal-400" placeholder="Computer Science" disabled readonly/>
-                    </div>
-                </div>
-                <div class="flex items-center">
-                    <i class="fas fa-building text-teal-400 mr-3"></i>
-                    <div>
-                        <h3 class="font-bold text-teal-400">Department</h3>
-                        <input type="text" id="department" class="mt-1 block w-full border border-gray-600 rounded-md p-2 bg-transparent text-teal-400" placeholder="School of Engineering" disabled/>
-                    </div>
-                </div>
-                <div class="flex items-center">
-                    <i class="fas fa-graduation-cap text-teal-400 mr-3"></i>
-                    <div>
-                        <h3 class="font-bold text-teal-400">Level</h3>
-                        <input type="text" id="level" class="mt-1 block w-full border border-gray-600 rounded-md p-2 bg-transparent text-teal-400" placeholder="Bachelor" disabled/>
-                    </div>
-                </div>
-                <div class="flex items-center">
-                    <i class="fas fa-calendar-alt text-teal-400 mr-3"></i>
-                    <div>
-                        <h3 class="font-bold text-teal-400">Year</h3>
-                        <input type="text" id="year" class="mt-1 block w-full border border-gray-600 rounded-md p-2 bg-transparent text-teal-400" placeholder="Third Year" disabled/>
-                    </div>
-                </div>
+    <h2 class="text-2xl font-bold text-teal-400 mb-6">My Profile</h2>
+
+    <div class="bg-gray-800 rounded-lg shadow-lg p-6 mb-8">
+        <div class="grid grid-cols-1 gap-6">
+            <div class="border-b border-gray-700 pb-4">
+                <h3 class="text-sm font-semibold text-gray-400 mb-2">Full Name</h3>
+                <p class="text-lg text-white" id="invigilator-name">Loading...</p>
             </div>
-            <div class="flex justify-between items-center mt-6">
-                <button type="button" class="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold rounded-md transition-transform transform hover:scale-105" id="edit-button">
-                    Edit Profile
-                </button>
-                <button type="submit" class="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold rounded-md transition-transform transform hover:scale-105 hidden" id="save-button">
-                    Save
-                </button>
+            
+            <div class="border-b border-gray-700 pb-4">
+                <h3 class="text-sm font-semibold text-gray-400 mb-2">Email</h3>
+                <p class="text-lg text-white" id="invigilator-email">Loading...</p>
             </div>
-        </form>
+            
+            <div class="border-b border-gray-700 pb-4">
+                <h3 class="text-sm font-semibold text-gray-400 mb-2">Department</h3>
+                <p class="text-lg text-white" id="invigilator-department">Loading...</p>
+            </div>
+            
+            <div class="pb-4">
+                <h3 class="text-sm font-semibold text-gray-400 mb-2">Role</h3>
+                <p class="text-lg text-white" id="invigilator-role">Loading...</p>
+            </div>
+        </div>
     </div>
 </main>
 
-<script>
-document.getElementById('edit-button').addEventListener('click', function() {
-    document.querySelectorAll('#profile-form input').forEach(input => input.disabled = false);
-    document.getElementById('save-button').classList.remove('hidden');
-    this.classList.add('hidden');
-});
+<footer class="bg-gray-800 py-4 mt-auto">
+    <div class="container mx-auto text-center text-gray-400">
+        <p>&copy; 2024 Examination Scheduler. All Rights Reserved.</p>
+    </div>
+</footer>
 
-document.getElementById('profile-form').addEventListener('submit', function(event) {
-    event.preventDefault();
-    document.querySelectorAll('#profile-form input').forEach(input => input.disabled = true);
-    document.getElementById('save-button').classList.add('hidden');
-    document.getElementById('edit-button').classList.remove('hidden');
-    // Add logic to save changes
-});
+<script>
+    async function loadInvigilatorProfile() {
+        try {
+            const response = await fetch('/api/invigilator/profile');
+            const profile = await response.json();
+            
+            document.getElementById('invigilator-name').textContent = profile.full_name;
+            document.getElementById('invigilator-email').textContent = profile.email;
+            document.getElementById('invigilator-department').textContent = profile.department_name;
+            document.getElementById('invigilator-role').textContent = profile.role;
+        } catch (error) {
+            console.error('Error loading profile:', error);
+        }
+    }
+
+    // Load profile when page loads
+    document.addEventListener('DOMContentLoaded', loadInvigilatorProfile);
+
+    // Logout functionality
+    document.getElementById('logout-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        try {
+            const response = await fetch('/api/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (response.ok) {
+                window.location.href = '/login';
+            } else {
+                console.error('Logout failed');
+            }
+        } catch (error) {
+            console.error('Error during logout:', error);
+        }
+    });
 </script>
-{% endblock %}
+
+</body>
+</html>

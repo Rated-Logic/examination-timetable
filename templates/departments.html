@@ -30,10 +30,10 @@
 </div>
 
 <!-- Add Department Modal -->
-<div id="add-department-modal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center hidden">
-    <div class="bg-gray-700 p-8 rounded-lg shadow-lg w-96">
+<div id="add-department-modal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-start overflow-y-auto py-8 hidden">
+    <div class="bg-gray-700 p-8 rounded-lg shadow-lg w-96 mx-auto my-8">
         <h3 class="text-2xl font-semibold text-teal-400 mb-4">Add New Department</h3>
-        <form id="add-department-form">
+        <form id="add-department-form" class="max-h-[70vh] overflow-y-auto">
             <div class="mb-4">
                 <label for="department-name" class="block text-teal-400">Department Name</label>
                 <input type="text" id="department-name" name="department-name" class="w-full p-2 bg-gray-600 text-teal-400 rounded-md" required>
@@ -50,6 +50,22 @@
                     <div class="mb-4">
                         <label for="students-1" class="block text-teal-400">Number of Students</label>
                         <input type="number" id="students-1" name="students-1" class="w-full p-2 bg-gray-600 text-teal-400 rounded-md" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="course-level-1" class="block text-teal-400">Level</label>
+                        <select id="course-level-1" name="course-level-1" class="w-full p-2 bg-gray-600 text-teal-400 rounded-md" required>
+                            <option value="bachelor">Bachelor</option>
+                            <option value="diploma">Diploma</option>
+                            <option value="masters">Masters</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label for="course-year-1" class="block text-teal-400">Year</label>
+                        <select id="course-year-1" name="course-year-1" class="w-full p-2 bg-gray-600 text-teal-400 rounded-md" required>
+                            <option value="first-year">First Year</option>
+                            <option value="second-year">Second Year</option>
+                            <option value="third-year">Third Year</option>
+                        </select>
                     </div>
 
                     <!-- List of Modules for this Course -->
@@ -77,61 +93,410 @@
     </div>
 </div>
 
+<!-- Edit Department Modal -->
+<div id="edit-department-modal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-start overflow-y-auto py-8 hidden">
+    <div class="bg-gray-700 p-8 rounded-lg shadow-lg w-96 mx-auto my-8">
+        <h3 class="text-2xl font-semibold text-teal-400 mb-4">Edit Department</h3>
+        <form id="edit-department-form" class="max-h-[70vh] overflow-y-auto">
+            <input type="hidden" id="edit-department-id">
+            <div class="mb-4">
+                <label for="edit-department-name" class="block text-teal-400">Department Name</label>
+                <input type="text" id="edit-department-name" name="edit-department-name" class="w-full p-2 bg-gray-600 text-teal-400 rounded-md" required>
+            </div>
+
+            <div id="edit-courses-container">
+                <!-- Courses will be loaded here dynamically -->
+            </div>
+
+            <!-- Button to add more courses in edit mode -->
+            <button type="button" class="text-teal-400 hover:text-teal-500 mb-4" id="edit-add-course-btn">Add Another Course</button>
+
+            <div class="mt-6">
+                <button type="submit" class="px-4 py-2 bg-teal-400 text-white rounded-md hover:bg-teal-500">Save Changes</button>
+                <button type="button" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 mt-4" id="cancel-edit-department">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
-    // Logic to dynamically add courses and modules
+    // Initialize counters
+    let courseCounter = 1;
+    let moduleCounter = [1];
 
-    let courseCounter = 1; // Tracks the number of courses
-    let moduleCounter = [1]; // Tracks the number of modules for each course
-
-    // Function to add a new course
+    // Add Course Button Event Listener
     document.getElementById('add-course-btn').addEventListener('click', () => {
         courseCounter++;
-        moduleCounter.push(1); // Reset module counter for new course
-
+        moduleCounter.push(1);
+        
         const courseContainer = document.createElement('div');
         courseContainer.classList.add('course-container', 'mb-4');
         courseContainer.innerHTML = `
             <h4 class="text-lg text-teal-400 mb-2">Course ${courseCounter}</h4>
             <div class="mb-4">
                 <label for="course-name-${courseCounter}" class="block text-teal-400">Course Name</label>
-                <input type="text" id="course-name-${courseCounter}" name="course-name-${courseCounter}" class="w-full p-2 bg-gray-600 text-teal-400 rounded-md" required>
+                <input type="text" id="course-name-${courseCounter}" name="course-name-${courseCounter}" 
+                       class="w-full p-2 bg-gray-600 text-teal-400 rounded-md" required>
             </div>
             <div class="mb-4">
                 <label for="students-${courseCounter}" class="block text-teal-400">Number of Students</label>
-                <input type="number" id="students-${courseCounter}" name="students-${courseCounter}" class="w-full p-2 bg-gray-600 text-teal-400 rounded-md" required>
+                <input type="number" id="students-${courseCounter}" name="students-${courseCounter}" 
+                       class="w-full p-2 bg-gray-600 text-teal-400 rounded-md" required>
             </div>
+            <div class="mb-4">
+                <label for="course-level-${courseCounter}" class="block text-teal-400">Level</label>
+                <select id="course-level-${courseCounter}" name="course-level-${courseCounter}" 
+                        class="w-full p-2 bg-gray-600 text-teal-400 rounded-md" required>
+                    <option value="bachelor">Bachelor</option>
+                    <option value="diploma">Diploma</option>
+                    <option value="masters">Masters</option>
+                </select>
+            </div>
+            <div class="mb-4">
+                <label for="course-year-${courseCounter}" class="block text-teal-400">Year</label>
+                <select id="course-year-${courseCounter}" name="course-year-${courseCounter}" 
+                        class="w-full p-2 bg-gray-600 text-teal-400 rounded-md" required>
+                    <option value="first-year">First Year</option>
+                    <option value="second-year">Second Year</option>
+                    <option value="third-year">Third Year</option>
+                </select>
+            </div>
+
+            <!-- List of Modules for this Course -->
             <div id="modules-container-${courseCounter}">
                 <div class="module-container mb-4">
                     <label for="module-${courseCounter}-1" class="block text-teal-400">Module 1</label>
-                    <input type="text" id="module-${courseCounter}-1" name="module-${courseCounter}-1" class="w-full p-2 bg-gray-600 text-teal-400 rounded-md mb-2" required>
+                    <input type="text" id="module-${courseCounter}-1" name="module-${courseCounter}-1" 
+                           class="w-full p-2 bg-gray-600 text-teal-400 rounded-md mb-2" required>
                 </div>
             </div>
-            <button type="button" class="text-teal-400 hover:text-teal-500" id="add-module-btn-${courseCounter}">Add Module</button>
+
+            <!-- Button to add more modules -->
+            <button type="button" class="text-teal-400 hover:text-teal-500" id="add-module-btn-${courseCounter}">
+                Add Module
+            </button>
         `;
         
         document.getElementById('courses-container').appendChild(courseContainer);
-
-        // Add event listener for the "Add Module" button
+        
+        // Add event listener for the new course's Add Module button
         document.getElementById(`add-module-btn-${courseCounter}`).addEventListener('click', () => {
-            moduleCounter[courseCounter - 1]++;
-            const moduleContainer = document.createElement('div');
-            moduleContainer.classList.add('module-container', 'mb-4');
-            moduleContainer.innerHTML = `
-                <label for="module-${courseCounter}-${moduleCounter[courseCounter - 1]}" class="block text-teal-400">Module ${moduleCounter[courseCounter - 1]}</label>
-                <input type="text" id="module-${courseCounter}-${moduleCounter[courseCounter - 1]}" name="module-${courseCounter}-${moduleCounter[courseCounter - 1]}" class="w-full p-2 bg-gray-600 text-teal-400 rounded-md mb-2" required>
-            `;
-            document.getElementById(`modules-container-${courseCounter}`).appendChild(moduleContainer);
+            addModuleToContainer(courseCounter, ++moduleCounter[courseCounter - 1]);
         });
     });
 
-    // Close Add Department Modal
-    document.getElementById('cancel-add-department').addEventListener('click', () => {
-        document.getElementById('add-department-modal').classList.add('hidden');
-    });
-
-    // Open Add Department Modal
+    // Open/Close Modal Event Listeners
     document.getElementById('add-department-btn').addEventListener('click', () => {
         document.getElementById('add-department-modal').classList.remove('hidden');
+    });
+
+    document.getElementById('cancel-add-department').addEventListener('click', () => {
+        document.getElementById('add-department-modal').classList.add('hidden');
+        // Reset form
+        document.getElementById('add-department-form').reset();
+        // Clear additional courses
+        const coursesContainer = document.getElementById('courses-container');
+        const courses = coursesContainer.querySelectorAll('.course-container');
+        for (let i = 1; i < courses.length; i++) {
+            courses[i].remove();
+        }
+        // Reset counters
+        courseCounter = 1;
+        moduleCounter = [1];
+    });
+
+    // Load departments and their courses
+    async function loadDepartments() {
+        const response = await fetch('/api/admin/departments');
+        const departments = await response.json();
+        
+        const departmentsGrid = document.querySelector('.grid');
+        departmentsGrid.innerHTML = departments.map(dept => `
+            <div class="bg-gray-700 p-6 rounded-lg shadow-lg">
+                <h3 class="text-xl font-semibold text-teal-400 mb-2">${dept.name}</h3>
+                <div class="space-y-4" id="courses-${dept._id}">
+                    ${renderCourses(dept.courses || [])}
+                </div>
+                <div class="flex space-x-4 mt-4">
+                    <a href="#" class="edit-dept-btn text-teal-400 hover:text-teal-500" 
+                       data-id="${dept._id}">Edit</a>
+                    <a href="#" class="delete-dept-btn text-red-500 hover:text-red-600" 
+                       data-id="${dept._id}">Delete</a>
+                </div>
+            </div>
+        `).join('');
+        
+        attachEventListeners();
+    }
+
+    function renderCourses(courses) {
+        return courses.map(course => `
+            <div class="bg-gray-600 p-4 rounded-md">
+                <h4 class="text-lg text-teal-400">Course: ${course.name}</h4>
+                <p class="text-gray-300 mb-2">Number of Students: ${course.student_count}</p>
+                <p class="text-gray-300 mb-2">Level: ${course.level}</p>
+                <p class="text-gray-300 mb-4">Year: ${course.year}</p>
+                <ul class="space-y-2">
+                    ${course.modules.map(module => `
+                        <li>${module}</li>
+                    `).join('')}
+                </ul>
+            </div>
+        `).join('');
+    }
+
+    // Handle department form submission
+    document.getElementById('add-department-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const courses = [];
+        const courseContainers = document.querySelectorAll('.course-container');
+        
+        courseContainers.forEach((container, courseIndex) => {
+            const courseNumber = courseIndex + 1;
+            const modules = [];
+            
+            container.querySelectorAll(`input[id^=module-${courseNumber}-]`).forEach(moduleInput => {
+                if (moduleInput.value.trim()) {
+                    modules.push(moduleInput.value.trim());
+                }
+            });
+            
+            courses.push({
+                name: document.getElementById(`course-name-${courseNumber}`).value,
+                student_count: parseInt(document.getElementById(`students-${courseNumber}`).value),
+                level: document.getElementById(`course-level-${courseNumber}`).value,
+                year: document.getElementById(`course-year-${courseNumber}`).value,
+                modules: modules
+            });
+        });
+        
+        const departmentData = {
+            department_name: document.getElementById('department-name').value,
+            courses: courses
+        };
+        
+        try {
+            const response = await fetch('/api/admin/departments/courses', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(departmentData)
+            });
+            
+            if (response.ok) {
+                document.getElementById('add-department-modal').classList.add('hidden');
+                document.getElementById('add-department-form').reset();
+                // Clear additional courses
+                const coursesContainer = document.getElementById('courses-container');
+                const courses = coursesContainer.querySelectorAll('.course-container');
+                for (let i = 1; i < courses.length; i++) {
+                    courses[i].remove();
+                }
+                // Reset counters
+                courseCounter = 1;
+                moduleCounter = [1];
+                loadDepartments();
+            } else {
+                const data = await response.json();
+                alert(data.error || 'Error adding department');
+            }
+        } catch (error) {
+            alert('Error adding department');
+            console.error(error);
+        }
+    });
+
+    // Add module button functionality
+    document.getElementById('add-module-btn-1').addEventListener('click', () => {
+        const courseNumber = 1;
+        moduleCounter[0]++;
+        addModuleToContainer(courseNumber, moduleCounter[0]);
+    });
+
+    function addModuleToContainer(courseNumber, moduleNumber) {
+        const moduleContainer = document.createElement('div');
+        moduleContainer.classList.add('module-container', 'mb-4');
+        moduleContainer.innerHTML = `
+            <label for="module-${courseNumber}-${moduleNumber}" class="block text-teal-400">Module ${moduleNumber}</label>
+            <input type="text" id="module-${courseNumber}-${moduleNumber}" name="module-${courseNumber}-${moduleNumber}" 
+                   class="w-full p-2 bg-gray-600 text-teal-400 rounded-md mb-2" required>
+        `;
+        document.getElementById(`modules-container-${courseNumber}`).appendChild(moduleContainer);
+    }
+
+    // Delete department functionality
+    async function deleteDepartment(deptId) {
+        try {
+            const response = await fetch(`/api/admin/departments/${deptId}`, {
+                method: 'DELETE'
+            });
+            
+            if (response.ok) {
+                loadDepartments();
+            } else {
+                const data = await response.json();
+                alert(data.error || 'Error deleting department');
+            }
+        } catch (error) {
+            alert('Error deleting department');
+            console.error(error);
+        }
+    }
+
+    function attachEventListeners() {
+        document.querySelectorAll('.delete-dept-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (confirm('Are you sure you want to delete this department?')) {
+                    deleteDepartment(e.target.dataset.id);
+                }
+            });
+        });
+
+        document.querySelectorAll('.edit-dept-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const deptId = e.target.dataset.id;
+                loadDepartmentForEdit(deptId);
+                document.getElementById('edit-department-modal').classList.remove('hidden');
+            });
+        });
+    }
+
+    // Load departments when page loads
+    loadDepartments();
+
+    // Add these new functions for edit functionality
+    async function loadDepartmentForEdit(deptId) {
+        const response = await fetch(`/api/admin/departments/${deptId}`);
+        const department = await response.json();
+        
+        document.getElementById('edit-department-id').value = deptId;
+        document.getElementById('edit-department-name').value = department.name;
+        
+        const coursesContainer = document.getElementById('edit-courses-container');
+        coursesContainer.innerHTML = '';
+        
+        department.courses.forEach((course, index) => {
+            const courseHtml = createEditCourseHtml(index + 1, course);
+            coursesContainer.insertAdjacentHTML('beforeend', courseHtml);
+            
+            // Add module button listener for this course
+            document.getElementById(`edit-add-module-btn-${index + 1}`).addEventListener('click', () => {
+                addModuleToEditContainer(index + 1);
+            });
+        });
+    }
+
+    function createEditCourseHtml(courseNumber, course = null) {
+        return `
+            <div class="edit-course-container mb-4">
+                <h4 class="text-lg text-teal-400 mb-2">Course ${courseNumber}</h4>
+                <div class="mb-4">
+                    <label for="edit-course-name-${courseNumber}" class="block text-teal-400">Course Name</label>
+                    <input type="text" id="edit-course-name-${courseNumber}" 
+                           class="w-full p-2 bg-gray-600 text-teal-400 rounded-md" 
+                           value="${course ? course.name : ''}" required>
+                </div>
+                <div class="mb-4">
+                    <label for="edit-students-${courseNumber}" class="block text-teal-400">Number of Students</label>
+                    <input type="number" id="edit-students-${courseNumber}" 
+                           class="w-full p-2 bg-gray-600 text-teal-400 rounded-md" 
+                           value="${course ? course.student_count : ''}" required>
+                </div>
+                <div class="mb-4">
+                    <label for="edit-course-level-${courseNumber}" class="block text-teal-400">Level</label>
+                    <select id="edit-course-level-${courseNumber}" 
+                            class="w-full p-2 bg-gray-600 text-teal-400 rounded-md" required>
+                        <option value="bachelor" ${course && course.level === 'bachelor' ? 'selected' : ''}>Bachelor</option>
+                        <option value="diploma" ${course && course.level === 'diploma' ? 'selected' : ''}>Diploma</option>
+                        <option value="masters" ${course && course.level === 'masters' ? 'selected' : ''}>Masters</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label for="edit-course-year-${courseNumber}" class="block text-teal-400">Year</label>
+                    <select id="edit-course-year-${courseNumber}" 
+                            class="w-full p-2 bg-gray-600 text-teal-400 rounded-md" required>
+                        <option value="first-year" ${course && course.year === 'first-year' ? 'selected' : ''}>First Year</option>
+                        <option value="second-year" ${course && course.year === 'second-year' ? 'selected' : ''}>Second Year</option>
+                        <option value="third-year" ${course && course.year === 'third-year' ? 'selected' : ''}>Third Year</option>
+                    </select>
+                </div>
+                <div id="edit-modules-container-${courseNumber}">
+                    ${course ? course.modules.map((module, idx) => `
+                        <div class="module-container mb-4">
+                            <label class="block text-teal-400">Module ${idx + 1}</label>
+                            <input type="text" id="edit-module-${courseNumber}-${idx + 1}" 
+                                   class="w-full p-2 bg-gray-600 text-teal-400 rounded-md mb-2" 
+                                   value="${module}" required>
+                        </div>
+                    `).join('') : ''}
+                </div>
+                <button type="button" class="text-teal-400 hover:text-teal-500" 
+                        id="edit-add-module-btn-${courseNumber}">Add Module</button>
+            </div>
+        `;
+    }
+
+    // Add edit form submission handler
+    document.getElementById('edit-department-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const deptId = document.getElementById('edit-department-id').value;
+        const courses = [];
+        const courseContainers = document.querySelectorAll('.edit-course-container');
+        
+        courseContainers.forEach((container, courseIndex) => {
+            const courseNumber = courseIndex + 1;
+            const modules = [];
+            
+            container.querySelectorAll(`input[id^=edit-module-${courseNumber}-]`).forEach(moduleInput => {
+                if (moduleInput.value.trim()) {
+                    modules.push(moduleInput.value.trim());
+                }
+            });
+            
+            courses.push({
+                name: document.getElementById(`edit-course-name-${courseNumber}`).value,
+                student_count: parseInt(document.getElementById(`edit-students-${courseNumber}`).value),
+                level: document.getElementById(`edit-course-level-${courseNumber}`).value,
+                year: document.getElementById(`edit-course-year-${courseNumber}`).value,
+                modules: modules
+            });
+        });
+        
+        const departmentData = {
+            name: document.getElementById('edit-department-name').value,
+            courses: courses
+        };
+        
+        try {
+            const response = await fetch(`/api/admin/departments/${deptId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(departmentData)
+            });
+            
+            if (response.ok) {
+                document.getElementById('edit-department-modal').classList.add('hidden');
+                loadDepartments();
+            } else {
+                const data = await response.json();
+                alert(data.error || 'Error updating department');
+            }
+        } catch (error) {
+            alert('Error updating department');
+            console.error(error);
+        }
+    });
+
+    // Add cancel button handler
+    document.getElementById('cancel-edit-department').addEventListener('click', () => {
+        document.getElementById('edit-department-modal').classList.add('hidden');
     });
 </script>
 

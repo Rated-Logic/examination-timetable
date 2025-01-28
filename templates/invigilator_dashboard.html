@@ -1,37 +1,140 @@
-{% extends "invigilator_sidebar.html" %}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invigilator Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet">
+    <style>
+        .gradiant {
+            background: linear-gradient(95deg, #059DFF 15%, #6549D5 45%, #E33FA1 75%, #FB5343 100%) 95%/200% 100%;
+        }
+        .bg-text {
+            background: linear-gradient(95deg, #059DFF 15%, #6549D5 45%, #E33FA1 75%, #FB5343 100%) 95%/200% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 to-black text-gray-300 min-h-screen">
 
-{% block title %}Invigilator Dashboard{% endblock %}
-
-{% block content %}
+<!-- Shared Navbar Start -->
+<header class="bg-gray-800 py-4 shadow-lg sticky top-0 z-50">
+    <div class="container mx-auto flex justify-between items-center px-4">
+        <h1 class="text-2xl font-bold text-teal-400">Exam Scheduler</h1>
+        <nav>
+            <ul class="flex space-x-6">
+                <li><a href="{{ url_for('invigilator_dashboard') }}" class="hover:text-teal-400">Home</a></li>
+                <li><a href="{{ url_for('invigilator_profile') }}" class="hover:text-teal-400">Profile</a></li>
+                <li>
+                    <form id="logout-form" class="m-0 p-0">
+                        <button type="submit" class="hover:text-teal-400">Logout</button>
+                    </form>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</header>
 
 <main class="container mx-auto px-4 py-8">
-    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
-        <h2 class="text-2xl font-bold text-teal-400 mb-4">Assigned Examinations</h2>
-        <table class="min-w-full bg-gray-900 text-gray-100">
+    <h2 class="text-2xl font-bold text-teal-400 mb-6">My Invigilation Schedule</h2>
+
+    <!-- Timetable Section -->
+    <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+        <table class="min-w-full">
             <thead>
-                <tr>
-                    <th class="px-4 py-2 text-teal-400">Day</th>
-                    <th class="px-4 py-2 text-teal-400">Session</th>
-                    <th class="px-4 py-2 text-teal-400">Time</th>
-                    <th class="px-4 py-2 text-teal-400">Class</th>
-                    <th class="px-4 py-2 text-teal-400">Module</th>
-                    <th class="px-4 py-2 text-teal-400">Number of Students</th>
-                    <th class="px-4 py-2 text-teal-400">Venue</th>
+                <tr class="bg-gray-700">
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-teal-400">Date</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-teal-400">Time</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-teal-400">Course</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-teal-400">Module</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-teal-400">Venue</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <td class="border px-4 py-2">Monday</td>
-                    <td class="border px-4 py-2">Morning</td>
-                    <td class="border px-4 py-2">9:00 AM - 12:00 PM</td>
-                    <td class="border px-4 py-2">Class A</td>
-                    <td class="border px-4 py-2">Math 101</td>
-                    <td class="border px-4 py-2">50</td>
-                    <td class="border px-4 py-2">Room 101</td>
-                </tr>
+            <tbody id="invigilator-timetable">
+                <!-- Will be populated dynamically -->
             </tbody>
         </table>
-        
     </div>
 </main>
-{% endblock %}
+
+<footer class="bg-gray-800 py-4 mt-auto">
+    <div class="container mx-auto text-center text-gray-400">
+        <p>&copy; 2024 Examination Scheduler. All Rights Reserved.</p>
+    </div>
+</footer>
+
+<script>
+    async function loadInvigilatorTimetable() {
+        try {
+            const response = await fetch('/api/invigilator/timetable');
+            const timetable = await response.json();
+            
+            const tableBody = document.getElementById('invigilator-timetable');
+            tableBody.innerHTML = '';
+            
+            if (timetable.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td colspan="5" class="px-6 py-4 text-center text-gray-400">
+                        No invigilation duties assigned yet
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            } else {
+                timetable.forEach(exam => {
+                    const row = document.createElement('tr');
+                    row.className = 'border-t border-gray-700 hover:bg-gray-700';
+                    row.innerHTML = `
+                        <td class="px-6 py-4 text-sm text-gray-300">${formatDate(exam.date)}</td>
+                        <td class="px-6 py-4 text-sm text-gray-300">${exam.start_time} - ${exam.end_time}</td>
+                        <td class="px-6 py-4 text-sm text-gray-300">${exam.course_name}</td>
+                        <td class="px-6 py-4 text-sm text-gray-300">${exam.module_name}</td>
+                        <td class="px-6 py-4 text-sm text-gray-300">${exam.venue}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+        } catch (error) {
+            console.error('Error loading timetable:', error);
+        }
+    }
+
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+    }
+
+    // Load timetable when page loads
+    document.addEventListener('DOMContentLoaded', loadInvigilatorTimetable);
+
+    // Logout functionality
+    document.getElementById('logout-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        try {
+            const response = await fetch('/api/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (response.ok) {
+                window.location.href = '/login';
+            } else {
+                console.error('Logout failed');
+            }
+        } catch (error) {
+            console.error('Error during logout:', error);
+        }
+    });
+</script>
+
+</body>
+</html>

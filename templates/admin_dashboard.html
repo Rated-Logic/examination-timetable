@@ -38,28 +38,16 @@
             </div>
         </a>
 
-        <!-- Time Management Option -->
-        <a href="{{ url_for('time') }}" class="bg-gray-800 p-6 rounded-lg shadow-lg transition-all transform hover:scale-105 hover:bg-gradient-to-r from-cyan-500 to-blue-500">
+        <!-- User Management Option -->
+        <a href="{{ url_for('departments') }}" class="bg-gray-800 p-6 rounded-lg shadow-lg transition-all transform hover:scale-105 hover:bg-gradient-to-r from-cyan-500 to-blue-500">
             <div class="flex items-center">
-                <i class="fas fa-calendar-alt text-3xl text-teal-400 mr-4"></i>
+                <i class="fas fa-cogs text-3xl text-teal-400 mr-4"></i>
                 <div>
-                    <h3 class="text-xl font-bold bg-text mb-2">Time</h3>
-                    <p class="text-gray-300">Set exam times.</p>
+                    <h3 class="text-xl font-bold bg-text mb-2">Departments</h3>
+                    <p class="text-gray-300">Manage Departments in the system.</p>
                 </div>
             </div>
         </a>
-
-        
-      <!-- User Management Option -->
-      <a href="{{ url_for('departments') }}" class="bg-gray-800 p-6 rounded-lg shadow-lg transition-all transform hover:scale-105 hover:bg-gradient-to-r from-cyan-500 to-blue-500">
-        <div class="flex items-center">
-            <i class="fas fa-cogs text-3xl text-teal-400 mr-4"></i>
-            <div>
-                <h3 class="text-xl font-bold bg-text mb-2">Departments</h3>
-                <p class="text-gray-300">Manage Departments in the system.</p>
-            </div>
-        </div>
-    </a>
         <!-- User Management Option -->
         <a href="{{ url_for('admin_user_management') }}" class="bg-gray-800 p-6 rounded-lg shadow-lg transition-all transform hover:scale-105 hover:bg-gradient-to-r from-cyan-500 to-blue-500">
             <div class="flex items-center">
@@ -72,4 +60,179 @@
         </a>
     </div>
 
+    <div class="p-6">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                <h3 class="text-xl font-bold text-teal-400">Total Students</h3>
+                <p class="text-3xl font-bold text-white mt-2" id="total-students">0</p>
+            </div>
+            <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                <h3 class="text-xl font-bold text-teal-400">Total Invigilators</h3>
+                <p class="text-3xl font-bold text-white mt-2" id="total-invigilators">0</p>
+            </div>
+            <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                <h3 class="text-xl font-bold text-teal-400">Total Venues</h3>
+                <p class="text-3xl font-bold text-white mt-2" id="total-venues">0</p>
+            </div>
+            <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                <h3 class="text-xl font-bold text-teal-400">Upcoming Exams</h3>
+                <p class="text-3xl font-bold text-white mt-2" id="upcoming-exams">0</p>
+            </div>
+        </div>
+
+        <!-- Upcoming Exams Section -->
+        <div class="mt-8 mb-12">
+            <h3 class="text-xl font-bold text-teal-400 mb-4">Upcoming Exams</h3>
+            <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+                <table class="min-w-full">
+                    <thead>
+                        <tr class="bg-gray-700">
+                            <th class="px-6 py-3 text-left text-sm font-semibold text-teal-400">Date</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold text-teal-400">Time</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold text-teal-400">Course</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold text-teal-400">Module</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold text-teal-400">Venue</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold text-teal-400">Invigilator</th>
+                        </tr>
+                    </thead>
+                    <tbody id="upcoming-exams-table">
+                        <!-- Will be populated dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <a href="{{ url_for('timetable') }}" class="bg-gray-800 p-6 rounded-lg shadow-lg hover:bg-gray-700 transition-colors">
+                <h3 class="text-xl font-bold text-teal-400">Generate Timetable</h3>
+                <p class="text-gray-400 mt-2">Create and manage examination schedules</p>
+            </a>
+            <a href="{{ url_for('admin_venue') }}" class="bg-gray-800 p-6 rounded-lg shadow-lg hover:bg-gray-700 transition-colors">
+                <h3 class="text-xl font-bold text-teal-400">Manage Venues</h3>
+                <p class="text-gray-400 mt-2">Add or modify examination venues</p>
+            </a>
+            <a href="#" onclick="openUserManagement()" class="bg-gray-800 p-6 rounded-lg shadow-lg hover:bg-gray-700 transition-colors">
+                <h3 class="text-xl font-bold text-teal-400">User Management</h3>
+                <p class="text-gray-400 mt-2">Manage students and invigilators</p>
+            </a>
+        </div>
+    </div>
+
+    <!-- User Management Modal -->
+    <div id="user-management-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden">
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-4xl mx-auto mt-20">
+            <h2 class="text-2xl font-bold text-teal-400 mb-4">User Management</h2>
+            <div class="mb-4">
+                <button onclick="openAddUserForm()" class="bg-teal-400 text-white px-4 py-2 rounded">Add New User</button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full bg-gray-900">
+                    <thead>
+                        <tr>
+                            <th class="px-4 py-2 text-teal-400">Email</th>
+                            <th class="px-4 py-2 text-teal-400">Role</th>
+                            <th class="px-4 py-2 text-teal-400">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-table-body">
+                        <!-- Users will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+            <button onclick="closeUserManagement()" class="mt-4 bg-gray-600 text-white px-4 py-2 rounded">Close</button>
+        </div>
+    </div>
+
+    <script>
+    async function loadDashboardStats() {
+        try {
+            const response = await fetch('/api/admin/stats');
+            const stats = await response.json();
+            
+            document.getElementById('total-students').textContent = stats.total_students;
+            document.getElementById('total-invigilators').textContent = stats.total_invigilators;
+            document.getElementById('total-venues').textContent = stats.total_venues;
+            document.getElementById('upcoming-exams').textContent = stats.upcoming_exams;
+            
+            const tableBody = document.getElementById('upcoming-exams-table');
+            tableBody.innerHTML = '';
+            
+            if (stats.next_exams.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td colspan="6" class="px-6 py-4 text-center text-gray-400">
+                        No upcoming exams scheduled
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            } else {
+                stats.next_exams.forEach(exam => {
+                    const row = document.createElement('tr');
+                    row.className = 'border-t border-gray-700 hover:bg-gray-700';
+                    row.innerHTML = `
+                        <td class="px-6 py-4 text-sm text-gray-300">${exam.date}</td>
+                        <td class="px-6 py-4 text-sm text-gray-300">${exam.time}</td>
+                        <td class="px-6 py-4 text-sm text-gray-300">${exam.course}</td>
+                        <td class="px-6 py-4 text-sm text-gray-300">${exam.module}</td>
+                        <td class="px-6 py-4 text-sm text-gray-300">${exam.venue}</td>
+                        <td class="px-6 py-4 text-sm text-gray-300">${exam.invigilator}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+        } catch (error) {
+            console.error('Error loading dashboard stats:', error);
+        }
+    }
+
+    async function loadUsers() {
+        try {
+            const response = await fetch('/api/admin/users');
+            const users = await response.json();
+            const tbody = document.getElementById('users-table-body');
+            tbody.innerHTML = '';
+            
+            users.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-4 py-2">${user.email}</td>
+                    <td class="px-4 py-2">${user.role}</td>
+                    <td class="px-4 py-2">
+                        <button onclick="deleteUser('${user.id}')" class="bg-red-500 text-white px-2 py-1 rounded">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        } catch (error) {
+            console.error('Error loading users:', error);
+        }
+    }
+
+    function openUserManagement() {
+        document.getElementById('user-management-modal').classList.remove('hidden');
+        loadUsers();
+    }
+
+    function closeUserManagement() {
+        document.getElementById('user-management-modal').classList.add('hidden');
+    }
+
+    async function deleteUser(userId) {
+        if (confirm('Are you sure you want to delete this user?')) {
+            try {
+                await fetch(`/api/admin/users/${userId}`, {
+                    method: 'DELETE'
+                });
+                loadUsers();
+            } catch (error) {
+                console.error('Error deleting user:', error);
+            }
+        }
+    }
+
+    // Load stats when page loads
+    document.addEventListener('DOMContentLoaded', loadDashboardStats);
+    </script>
 {% endblock %}

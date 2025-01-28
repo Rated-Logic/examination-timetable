@@ -9,36 +9,8 @@
 </div>
 
 <!-- Time Management Grid -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    <!-- Time Card -->
-    <div class="bg-gray-700 p-6 rounded-lg shadow-lg">
-        <h3 class="text-xl font-semibold text-teal-400 mb-2">9:00 AM - 11:00 AM</h3>
-        <p class="text-gray-300 mb-4">Session 1</p>
-        <div class="flex space-x-4">
-            <a href="#" class="edit-time-btn text-teal-400 hover:text-teal-500" data-time="9:00 AM - 11:00 AM">Edit</a>
-            <a href="#" class="delete-time-btn text-red-500 hover:text-red-600" data-time="9:00 AM - 11:00 AM">Delete</a>
-        </div>
-    </div>
-
-    <!-- Time Card -->
-    <div class="bg-gray-700 p-6 rounded-lg shadow-lg">
-        <h3 class="text-xl font-semibold text-teal-400 mb-2">12:00 PM - 2:00 PM</h3>
-        <p class="text-gray-300 mb-4">Session 2</p>
-        <div class="flex space-x-4">
-            <a href="#" class="edit-time-btn text-teal-400 hover:text-teal-500" data-time="12:00 PM - 2:00 PM">Edit</a>
-            <a href="#" class="delete-time-btn text-red-500 hover:text-red-600" data-time="12:00 PM - 2:00 PM">Delete</a>
-        </div>
-    </div>
-
-    <!-- Time Card -->
-    <div class="bg-gray-700 p-6 rounded-lg shadow-lg">
-        <h3 class="text-xl font-semibold text-teal-400 mb-2">3:00 PM - 5:00 PM</h3>
-        <p class="text-gray-300 mb-4">Session 3</p>
-        <div class="flex space-x-4">
-            <a href="#" class="edit-time-btn text-teal-400 hover:text-teal-500" data-time="3:00 PM - 5:00 PM">Edit</a>
-            <a href="#" class="delete-time-btn text-red-500 hover:text-red-600" data-time="3:00 PM - 5:00 PM">Delete</a>
-        </div>
-    </div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="timeSlotsList">
+    <!-- Time slots will be loaded here dynamically -->
 </div>
 
 <!-- Add Time Modal -->
@@ -83,51 +55,147 @@
 </div>
 
 <script>
-    // Time Modal logic (similar to Venue)
-    // Open Add Time Modal
-    document.getElementById('add-time-btn').addEventListener('click', () => {
-        document.getElementById('add-time-modal').classList.remove('hidden');
-    });
+    let editingId = null;
 
-    // Close Add Time Modal
-    document.getElementById('cancel-add-time').addEventListener('click', () => {
-        document.getElementById('add-time-modal').classList.add('hidden');
-    });
+    // Load time slots from the server
+    async function loadTimeSlots() {
+        const response = await fetch('/api/admin/time');
+        const slots = await response.json();
+        
+        const timeSlotsList = document.getElementById('timeSlotsList');
+        timeSlotsList.innerHTML = slots.map(slot => `
+            <div class="bg-gray-700 p-6 rounded-lg shadow-lg">
+                <h3 class="text-xl font-semibold text-teal-400 mb-2">${slot.start_time} - ${slot.end_time}</h3>
+                <p class="text-gray-300 mb-4">${slot.name}</p>
+                <div class="flex space-x-4">
+                    <a href="#" class="edit-time-btn text-teal-400 hover:text-teal-500" 
+                       data-id="${slot._id}" 
+                       data-name="${slot.name}"
+                       data-start="${slot.start_time}"
+                       data-end="${slot.end_time}">Edit</a>
+                    <a href="#" class="delete-time-btn text-red-500 hover:text-red-600" 
+                       data-id="${slot._id}">Delete</a>
+                </div>
+            </div>
+        `).join('');
 
-    // Open Edit Time Modal and Pre-fill Data
-    document.querySelectorAll('.edit-time-btn').forEach(button => {
-        button.addEventListener('click', (e) => {
-            const timeRange = e.target.getAttribute('data-time');
-            document.getElementById('edit-time-range').value = timeRange;
-            document.getElementById('edit-time-modal').classList.remove('hidden');
+        // Reattach event listeners
+        attachEventListeners();
+    }
+
+    // Add Time Form Submit
+    document.getElementById('add-time-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const timeRange = document.getElementById('time-range').value;
+        const [startTime, endTime] = timeRange.split('-').map(t => t.trim());
+        
+        const response = await fetch('/api/admin/time', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: `Session ${startTime}`,
+                start_time: startTime,
+                end_time: endTime
+            })
         });
+
+        if (response.ok) {
+            document.getElementById('add-time-modal').classList.add('hidden');
+            loadTimeSlots();
+        } else {
+            alert('Error adding time slot');
+        }
     });
 
-    // Close Edit Time Modal
-    document.getElementById('cancel-edit-time').addEventListener('click', () => {
-        document.getElementById('edit-time-modal').classList.add('hidden');
-    });
-
-    // Open Delete Time Modal
-    document.querySelectorAll('.delete-time-btn').forEach(button => {
-        button.addEventListener('click', (e) => {
-            const timeRange = e.target.getAttribute('data-time');
-            document.getElementById('delete-time-btn').setAttribute('data-time', timeRange);
-            document.getElementById('delete-time-modal').classList.remove('hidden');
+    // Edit Time Form Submit
+    document.getElementById('edit-time-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const timeRange = document.getElementById('edit-time-range').value;
+        const [startTime, endTime] = timeRange.split('-').map(t => t.trim());
+        
+        const response = await fetch(`/api/admin/time/${editingId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: `Session ${startTime}`,
+                start_time: startTime,
+                end_time: endTime
+            })
         });
+
+        if (response.ok) {
+            document.getElementById('edit-time-modal').classList.add('hidden');
+            loadTimeSlots();
+        } else {
+            alert('Error updating time slot');
+        }
     });
 
-    // Close Delete Time Modal
-    document.getElementById('cancel-delete-time').addEventListener('click', () => {
-        document.getElementById('delete-time-modal').classList.add('hidden');
-    });
+    // Delete Time Slot
+    async function deleteTimeSlot(timeId) {
+        const response = await fetch(`/api/admin/time/${timeId}`, {
+            method: 'DELETE'
+        });
+        
+        if (response.ok) {
+            document.getElementById('delete-time-modal').classList.add('hidden');
+            loadTimeSlots();
+        } else {
+            alert('Error deleting time slot');
+        }
+    }
 
-    // Handle Delete Time Action
-    document.getElementById('delete-time-btn').addEventListener('click', () => {
-        const timeRange = document.getElementById('delete-time-btn').getAttribute('data-time');
-        alert(`Time range ${timeRange} will be deleted!`);
-        document.getElementById('delete-time-modal').classList.add('hidden');
-    });
+    function attachEventListeners() {
+        // Keep your existing modal open/close event listeners
+        document.getElementById('add-time-btn').addEventListener('click', () => {
+            document.getElementById('add-time-modal').classList.remove('hidden');
+        });
+
+        document.getElementById('cancel-add-time').addEventListener('click', () => {
+            document.getElementById('add-time-modal').classList.add('hidden');
+        });
+
+        // Edit button listeners
+        document.querySelectorAll('.edit-time-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                editingId = e.target.dataset.id;
+                const startTime = e.target.dataset.start;
+                const endTime = e.target.dataset.end;
+                document.getElementById('edit-time-range').value = `${startTime} - ${endTime}`;
+                document.getElementById('edit-time-modal').classList.remove('hidden');
+            });
+        });
+
+        document.getElementById('cancel-edit-time').addEventListener('click', () => {
+            document.getElementById('edit-time-modal').classList.add('hidden');
+        });
+
+        // Delete button listeners
+        document.querySelectorAll('.delete-time-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const timeId = e.target.dataset.id;
+                document.getElementById('delete-time-btn').setAttribute('data-id', timeId);
+                document.getElementById('delete-time-modal').classList.remove('hidden');
+            });
+        });
+
+        document.getElementById('cancel-delete-time').addEventListener('click', () => {
+            document.getElementById('delete-time-modal').classList.add('hidden');
+        });
+
+        // Handle Delete Time Action
+        document.getElementById('delete-time-btn').addEventListener('click', () => {
+            const timeId = document.getElementById('delete-time-btn').getAttribute('data-id');
+            deleteTimeSlot(timeId);
+        });
+    }
+
+    // Load time slots when page loads
+    loadTimeSlots();
 </script>
 
 {% endblock %}

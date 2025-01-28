@@ -1,0 +1,408 @@
+{% extends "admin_sidebar.html" %}
+
+{% block title %}User Management{% endblock %}
+
+{% block content %}
+<h2 class="text-2xl font-bold text-teal-400 mb-4">User Management</h2>
+
+<!-- Add User Button -->
+<div class="mb-4">
+    <a href="#" id="add-user-btn" class="px-4 py-2 bg-teal-400 text-white rounded-md hover:bg-teal-500">Add User</a>
+</div>
+
+<!-- User Management Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="usersList">
+    <!-- Users will be loaded here dynamically -->
+</div>
+
+<!-- Delete User Modal -->
+<div id="delete-user-modal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center hidden">
+    <div class="bg-gray-700 p-8 rounded-lg shadow-lg w-96">
+        <h3 class="text-2xl font-semibold text-teal-400 mb-4">Confirm Delete</h3>
+        <p class="text-gray-300 mb-6">Are you sure you want to delete this user?</p>
+        <div class="flex justify-end space-x-4">
+            <button id="cancel-delete-user" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700">Cancel</button>
+            <button id="delete-user-btn" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">Delete</button>
+        </div>
+    </div>
+</div>
+
+<!-- Edit User Modal -->
+<div id="edit-user-modal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-start overflow-y-auto py-8 hidden">
+    <div class="bg-gray-700 p-8 rounded-lg shadow-lg w-96 mx-auto my-8">
+        <h3 class="text-2xl font-semibold text-teal-400 mb-4">Edit User</h3>
+        <form id="edit-user-form" class="space-y-4">
+            <input type="hidden" id="edit-user-id">
+            <div>
+                <label class="block text-gray-200 mb-1">Email</label>
+                <input type="email" id="edit-email" class="w-full border border-gray-600 rounded-md p-2 bg-gray-700 text-gray-100" required>
+            </div>
+            <div>
+                <label class="block text-gray-200 mb-1">Full Name</label>
+                <input type="text" id="edit-full-name" class="w-full border border-gray-600 rounded-md p-2 bg-gray-700 text-gray-100" required>
+            </div>
+            <div>
+                <label class="block text-gray-200 mb-1">Department</label>
+                <select id="edit-department" class="w-full border border-gray-600 rounded-md p-2 bg-gray-700 text-gray-100" required>
+                    <!-- Departments will be loaded dynamically -->
+                </select>
+            </div>
+            <div class="student-fields" style="display: none;">
+                <div>
+                    <label class="block text-gray-200 mb-1">Course</label>
+                    <select id="edit-course" class="w-full border border-gray-600 rounded-md p-2 bg-gray-700 text-gray-100">
+                        <!-- Courses will be loaded dynamically -->
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-gray-200 mb-1">Level</label>
+                    <select id="edit-level" class="w-full border border-gray-600 rounded-md p-2 bg-gray-700 text-gray-100">
+                        <option value="bachelor">Bachelor</option>
+                        <option value="diploma">Diploma</option>
+                        <option value="masters">Masters</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-gray-200 mb-1">Year</label>
+                    <select id="edit-year" class="w-full border border-gray-600 rounded-md p-2 bg-gray-700 text-gray-100">
+                        <option value="first-year">First Year</option>
+                        <option value="second-year">Second Year</option>
+                        <option value="third-year">Third Year</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex justify-end space-x-4 mt-6">
+                <button type="button" id="cancel-edit-user" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700">Cancel</button>
+                <button type="submit" class="px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Add User Modal -->
+<div id="add-user-modal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-start overflow-y-auto py-8 hidden">
+    <div class="bg-gray-700 p-8 rounded-lg shadow-lg w-96 mx-auto my-8">
+        <h3 class="text-2xl font-semibold text-teal-400 mb-4">Add New User</h3>
+        <form id="add-user-form" class="space-y-4">
+            <div>
+                <label class="block text-gray-200 mb-1">Email</label>
+                <input type="email" id="add-email" class="w-full border border-gray-600 rounded-md p-2 bg-gray-700 text-gray-100" required>
+            </div>
+            <div>
+                <label class="block text-gray-200 mb-1">Full Name</label>
+                <input type="text" id="add-full-name" class="w-full border border-gray-600 rounded-md p-2 bg-gray-700 text-gray-100" required>
+            </div>
+            <div>
+                <label class="block text-gray-200 mb-1">Role</label>
+                <select id="add-role" class="w-full border border-gray-600 rounded-md p-2 bg-gray-700 text-gray-100" required>
+                    <option value="student">Student</option>
+                    <option value="invigilator">Invigilator</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-gray-200 mb-1">Department</label>
+                <select id="add-department" class="w-full border border-gray-600 rounded-md p-2 bg-gray-700 text-gray-100" required>
+                    <!-- Departments will be loaded dynamically -->
+                </select>
+            </div>
+            <div class="add-student-fields" style="display: none;">
+                <div>
+                    <label class="block text-gray-200 mb-1">Course</label>
+                    <select id="add-course" class="w-full border border-gray-600 rounded-md p-2 bg-gray-700 text-gray-100">
+                        <!-- Courses will be loaded dynamically -->
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-gray-200 mb-1">Level</label>
+                    <select id="add-level" class="w-full border border-gray-600 rounded-md p-2 bg-gray-700 text-gray-100">
+                        <option value="bachelor">Bachelor</option>
+                        <option value="diploma">Diploma</option>
+                        <option value="masters">Masters</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-gray-200 mb-1">Year</label>
+                    <select id="add-year" class="w-full border border-gray-600 rounded-md p-2 bg-gray-700 text-gray-100">
+                        <option value="first-year">First Year</option>
+                        <option value="second-year">Second Year</option>
+                        <option value="third-year">Third Year</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <label class="block text-gray-200 mb-1">Password</label>
+                <input type="password" id="add-password" class="w-full border border-gray-600 rounded-md p-2 bg-gray-700 text-gray-100" required>
+            </div>
+            <div class="flex justify-end space-x-4 mt-6">
+                <button type="button" id="cancel-add-user" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700">Cancel</button>
+                <button type="submit" class="px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700">Add User</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Load and display users
+    async function loadUsers() {
+        try {
+            const response = await fetch('/api/admin/users');
+            const users = await response.json();
+            
+            const usersList = document.getElementById('usersList');
+            usersList.innerHTML = users.map(user => `
+                <div class="bg-gray-700 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-xl font-semibold text-teal-400 mb-2">${user.full_name}</h3>
+                    <div class="text-gray-300 space-y-2">
+                        <p><span class="font-semibold">Email:</span> ${user.email}</p>
+                        <p><span class="font-semibold">Role:</span> ${user.role}</p>
+                        <p><span class="font-semibold">Department:</span> ${user.department_name}</p>
+                        ${user.role === 'student' ? `
+                            <p><span class="font-semibold">Course:</span> ${user.course}</p>
+                            <p><span class="font-semibold">Level:</span> ${user.level}</p>
+                            <p><span class="font-semibold">Year:</span> ${user.year}</p>
+                        ` : ''}
+                    </div>
+                    <div class="flex space-x-4 mt-4">
+                        <button onclick="editUser('${user._id}')" class="text-teal-400 hover:text-teal-500">Edit</button>
+                        <button onclick="confirmDelete('${user._id}')" class="text-red-400 hover:text-red-500">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        } catch (error) {
+            console.error('Error loading users:', error);
+        }
+    }
+
+    // Load departments for edit form
+    async function loadDepartments() {
+        try {
+            const response = await fetch('/api/departments');
+            const departments = await response.json();
+            
+            const departmentSelects = ['edit-department', 'add-department'];
+            departmentSelects.forEach(selectId => {
+                const select = document.getElementById(selectId);
+                select.innerHTML = departments.map(dept => `
+                    <option value="${dept._id}">${dept.name}</option>
+                `).join('');
+            });
+        } catch (error) {
+            console.error('Error loading departments:', error);
+        }
+    }
+
+    // Edit user
+    async function editUser(userId) {
+        try {
+            const response = await fetch(`/api/admin/users/${userId}`);
+            const user = await response.json();
+            
+            document.getElementById('edit-user-id').value = userId;
+            document.getElementById('edit-email').value = user.email;
+            document.getElementById('edit-full-name').value = user.full_name;
+            document.getElementById('edit-department').value = user.department_id;
+
+            const studentFields = document.querySelector('.student-fields');
+            if (user.role === 'student') {
+                studentFields.style.display = 'block';
+                document.getElementById('edit-course').value = user.course;
+                document.getElementById('edit-level').value = user.level;
+                document.getElementById('edit-year').value = user.year;
+            } else {
+                studentFields.style.display = 'none';
+            }
+
+            document.getElementById('edit-user-modal').classList.remove('hidden');
+        } catch (error) {
+            console.error('Error loading user details:', error);
+        }
+    }
+
+    // Handle edit form submission
+    document.getElementById('edit-user-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const userId = document.getElementById('edit-user-id').value;
+        const userData = {
+            email: document.getElementById('edit-email').value,
+            full_name: document.getElementById('edit-full-name').value,
+            department: document.getElementById('edit-department').value
+        };
+
+        if (document.querySelector('.student-fields').style.display !== 'none') {
+            userData.course = document.getElementById('edit-course').value;
+            userData.level = document.getElementById('edit-level').value;
+            userData.year = document.getElementById('edit-year').value;
+        }
+
+        try {
+            const response = await fetch(`/api/admin/users/${userId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData)
+            });
+
+            if (response.ok) {
+                document.getElementById('edit-user-modal').classList.add('hidden');
+                loadUsers();
+            } else {
+                const data = await response.json();
+                alert(data.error || 'Error updating user');
+            }
+        } catch (error) {
+            console.error('Error updating user:', error);
+            alert('Error updating user');
+        }
+    });
+
+    // Delete user
+    async function confirmDelete(userId) {
+        document.getElementById('delete-user-btn').setAttribute('data-id', userId);
+        document.getElementById('delete-user-modal').classList.remove('hidden');
+    }
+
+    async function deleteUser(userId) {
+        try {
+            const response = await fetch(`/api/admin/users/${userId}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                document.getElementById('delete-user-modal').classList.add('hidden');
+                loadUsers();
+            } else {
+                const data = await response.json();
+                alert(data.error || 'Error deleting user');
+            }
+        } catch (error) {
+            console.error('Error deleting user:', error);
+            alert('Error deleting user');
+        }
+    }
+
+    // Event Listeners
+    document.getElementById('delete-user-btn').addEventListener('click', function() {
+        const userId = this.getAttribute('data-id');
+        deleteUser(userId);
+    });
+
+    document.getElementById('cancel-delete-user').addEventListener('click', () => {
+        document.getElementById('delete-user-modal').classList.add('hidden');
+    });
+
+    document.getElementById('cancel-edit-user').addEventListener('click', () => {
+        document.getElementById('edit-user-modal').classList.add('hidden');
+    });
+
+    // Add User button click handler
+    document.getElementById('add-user-btn').addEventListener('click', () => {
+        document.getElementById('add-user-modal').classList.remove('hidden');
+    });
+
+    // Cancel Add User
+    document.getElementById('cancel-add-user').addEventListener('click', () => {
+        document.getElementById('add-user-modal').classList.add('hidden');
+        document.getElementById('add-user-form').reset();
+    });
+
+    // Role change handler for Add User form
+    document.getElementById('add-role').addEventListener('change', function() {
+        const studentFields = document.querySelector('.add-student-fields');
+        const courseSelect = document.getElementById('add-course');
+        
+        if (this.value === 'student') {
+            studentFields.style.display = 'block';
+            loadCoursesForDepartment('add-department', 'add-course');
+        } else {
+            studentFields.style.display = 'none';
+            courseSelect.innerHTML = '<option value="">Select Course</option>';
+        }
+    });
+
+    // Department change handler for Add User form
+    document.getElementById('add-department').addEventListener('change', function() {
+        if (document.getElementById('add-role').value === 'student') {
+            loadCoursesForDepartment('add-department', 'add-course');
+        }
+    });
+
+    // Load courses for department
+    async function loadCoursesForDepartment(departmentSelectId, courseSelectId) {
+        const departmentId = document.getElementById(departmentSelectId).value;
+        const courseSelect = document.getElementById(courseSelectId);
+        
+        if (!departmentId) {
+            courseSelect.innerHTML = '<option value="">Select Course</option>';
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/departments/${departmentId}/courses`);
+            const data = await response.json();
+            
+            courseSelect.innerHTML = '<option value="">Select Course</option>' + 
+                data.courses.map(course => `
+                    <option value="${course.name}" 
+                            data-level="${course.level}" 
+                            data-year="${course.year}">
+                        ${course.name}
+                    </option>
+                `).join('');
+        } catch (error) {
+            console.error('Error loading courses:', error);
+        }
+    }
+
+    // Add User form submission
+    document.getElementById('add-user-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const userData = {
+            email: document.getElementById('add-email').value,
+            full_name: document.getElementById('add-full-name').value,
+            role: document.getElementById('add-role').value,
+            department: document.getElementById('add-department').value,
+            password: document.getElementById('add-password').value
+        };
+
+        if (userData.role === 'student') {
+            userData.course = document.getElementById('add-course').value;
+            userData.level = document.getElementById('add-level').value;
+            userData.year = document.getElementById('add-year').value;
+
+            if (!userData.course) {
+                alert('Please select a course');
+                return;
+            }
+        }
+
+        try {
+            const response = await fetch('/api/admin/users', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData)
+            });
+
+            if (response.ok) {
+                document.getElementById('add-user-modal').classList.add('hidden');
+                document.getElementById('add-user-form').reset();
+                loadUsers();
+            } else {
+                const data = await response.json();
+                alert(data.error || 'Error adding user');
+            }
+        } catch (error) {
+            console.error('Error adding user:', error);
+            alert('Error adding user');
+        }
+    });
+
+    // Load initial data
+    loadUsers();
+    loadDepartments();
+</script>
+{% endblock %} 

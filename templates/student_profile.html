@@ -18,17 +18,21 @@
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-gray-900 to-black text-gray-300 overflow-hidden">
+<body class="bg-gradient-to-br from-gray-900 to-black text-gray-300 min-h-screen">
 
 <!-- Shared Navbar Start -->
-<header class="bg-gray-800 py-4 shadow-lg">
-    <div class="container mx-auto flex justify-between items-center">
-        <h1 class="text-2xl font-bold text-teal-400">TestXpert</h1>
+<header class="bg-gray-800 py-4 shadow-lg sticky top-0 z-50">
+    <div class="container mx-auto flex justify-between items-center px-4">
+        <h1 class="text-2xl font-bold text-teal-400">Exam Scheduler</h1>
         <nav>
             <ul class="flex space-x-6">
                 <li><a href="{{ url_for('student_dashboard') }}" class="hover:text-teal-400">Home</a></li>
                 <li><a href="{{ url_for('student_profile') }}" class="hover:text-teal-400">Profile</a></li>
-                <li><a href="{{ url_for('login') }}" class="hover:text-teal-400">Logout</a></li>
+                <li>
+                    <form id="logout-form" class="m-0 p-0">
+                        <button type="submit" class="hover:text-teal-400">Logout</button>
+                    </form>
+                </li>
             </ul>
         </nav>
     </div>
@@ -36,86 +40,88 @@
 <!-- Shared Navbar End -->
 
 <main class="container mx-auto px-4 py-8">
-    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
-        <h2 class="text-2xl font-bold text-teal-400 mb-4">Profile Settings</h2>
-        <form id="profile-form">
-            <div class="bg-gray-700 p-6 rounded-lg shadow-inner space-y-6">
-                <div class="flex items-center">
-                    <i class="fas fa-user text-teal-400 mr-3"></i>
-                    <div>
-                        <h3 class="font-bold text-teal-400">Full Name</h3>
-                        <input type="text" id="full-name" class="mt-1 block w-full border border-gray-600 rounded-md p-2 bg-transparent text-teal-400" placeholder="John Doe" disabled/>
-                    </div>
-                </div>
-                <div class="flex items-center">
-                    <i class="fas fa-id-badge text-teal-400 mr-3"></i>
-                    <div>
-                        <h3 class="font-bold text-teal-400">Registration Number</h3>
-                        <input type="text" id="registration-number" class="mt-1 block w-full border border-gray-600 rounded-md p-2 bg-transparent text-teal-400" placeholder="123456789" disabled/>
-                    </div>
-                </div>
-                <div class="flex items-center">
-                    <i class="fas fa-book text-teal-400 mr-3"></i>
-                    <div>
-                        <h3 class="font-bold text-teal-400">Course</h3>
-                        <input type="text" id="course" class="mt-1 block w-full border border-gray-600 rounded-md p-2 bg-transparent text-teal-400" placeholder="Computer Science" disabled readonly/>
-                    </div>
-                </div>
-                <div class="flex items-center">
-                    <i class="fas fa-building text-teal-400 mr-3"></i>
-                    <div>
-                        <h3 class="font-bold text-teal-400">Department</h3>
-                        <input type="text" id="department" class="mt-1 block w-full border border-gray-600 rounded-md p-2 bg-transparent text-teal-400" placeholder="School of Engineering" disabled/>
-                    </div>
-                </div>
-                <div class="flex items-center">
-                    <i class="fas fa-graduation-cap text-teal-400 mr-3"></i>
-                    <div>
-                        <h3 class="font-bold text-teal-400">Level</h3>
-                        <input type="text" id="level" class="mt-1 block w-full border border-gray-600 rounded-md p-2 bg-transparent text-teal-400" placeholder="Bachelor" disabled/>
-                    </div>
-                </div>
-                <div class="flex items-center">
-                    <i class="fas fa-calendar-alt text-teal-400 mr-3"></i>
-                    <div>
-                        <h3 class="font-bold text-teal-400">Year</h3>
-                        <input type="text" id="year" class="mt-1 block w-full border border-gray-600 rounded-md p-2 bg-transparent text-teal-400" placeholder="Third Year" disabled/>
-                    </div>
-                </div>
+    <h2 class="text-2xl font-bold text-teal-400 mb-6">My Profile</h2>
+
+    <div class="bg-gray-800 rounded-lg shadow-lg p-6 mb-8">
+        <div class="grid grid-cols-1 gap-6">
+            <div class="border-b border-gray-700 pb-4">
+                <h3 class="text-sm font-semibold text-gray-400 mb-2">Full Name</h3>
+                <p class="text-lg text-white" id="student-name">Loading...</p>
             </div>
-            <div class="flex justify-between items-center mt-6">
-                <button type="button" class="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-md transition-transform transform hover:scale-105" id="edit-button">
-                    Edit Profile
-                </button>
-                <button type="submit" class="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-md transition-transform transform hover:scale-105 hidden" id="save-button">
-                    Save
-                </button>
-                
+            
+            <div class="border-b border-gray-700 pb-4">
+                <h3 class="text-sm font-semibold text-gray-400 mb-2">Email</h3>
+                <p class="text-lg text-white" id="student-email">Loading...</p>
             </div>
-        </form>
+            
+            <div class="border-b border-gray-700 pb-4">
+                <h3 class="text-sm font-semibold text-gray-400 mb-2">Department</h3>
+                <p class="text-lg text-white" id="student-department">Loading...</p>
+            </div>
+            
+            <div class="border-b border-gray-700 pb-4">
+                <h3 class="text-sm font-semibold text-gray-400 mb-2">Course</h3>
+                <p class="text-lg text-white" id="student-course">Loading...</p>
+            </div>
+            
+            <div class="border-b border-gray-700 pb-4">
+                <h3 class="text-sm font-semibold text-gray-400 mb-2">Level</h3>
+                <p class="text-lg text-white" id="student-level">Loading...</p>
+            </div>
+            
+            <div class="pb-4">
+                <h3 class="text-sm font-semibold text-gray-400 mb-2">Year</h3>
+                <p class="text-lg text-white" id="student-year">Loading...</p>
+            </div>
+        </div>
     </div>
 </main>
 
-<footer class="bg-gray-800 py-4 mt-8">
+<footer class="bg-gray-800 py-4 mt-auto">
     <div class="container mx-auto text-center text-gray-400">
         <p>&copy; 2024 Examination Scheduler. All Rights Reserved.</p>
     </div>
 </footer>
 
 <script>
-document.getElementById('edit-button').addEventListener('click', function() {
-    document.querySelectorAll('#profile-form input').forEach(input => input.disabled = false);
-    document.getElementById('save-button').classList.remove('hidden');
-    this.classList.add('hidden');
-});
+    async function loadStudentProfile() {
+        try {
+            const response = await fetch('/api/student/profile');
+            const profile = await response.json();
+            
+            document.getElementById('student-name').textContent = profile.full_name;
+            document.getElementById('student-email').textContent = profile.email;
+            document.getElementById('student-department').textContent = profile.department_name;
+            document.getElementById('student-course').textContent = profile.course;
+            document.getElementById('student-level').textContent = profile.level;
+            document.getElementById('student-year').textContent = profile.year;
+        } catch (error) {
+            console.error('Error loading profile:', error);
+        }
+    }
 
-document.getElementById('profile-form').addEventListener('submit', function(event) {
-    event.preventDefault();
-    document.querySelectorAll('#profile-form input').forEach(input => input.disabled = true);
-    document.getElementById('save-button').classList.add('hidden');
-    document.getElementById('edit-button').classList.remove('hidden');
-    // Add logic to save changes
-});
+    // Load profile when page loads
+    document.addEventListener('DOMContentLoaded', loadStudentProfile);
+
+    document.getElementById('logout-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        try {
+            const response = await fetch('/api/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (response.ok) {
+                window.location.href = '/login';  // Redirect to login page
+            } else {
+                console.error('Logout failed');
+            }
+        } catch (error) {
+            console.error('Error during logout:', error);
+        }
+    });
 </script>
 
 </body>
